@@ -27,9 +27,7 @@ public class ClienteEntidad extends PersonaEntidad {
     @Column(name = "id_cliente")
     private Long clienteId;
 
-    @NotNull
-    @NotBlank(message = "La contraseña es obligatoria")
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 4)
     private String clave;
 
     @NotNull
