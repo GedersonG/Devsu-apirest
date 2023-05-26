@@ -26,6 +26,7 @@ public class CuentaHandler implements ICuentaHandler {
     @Override
     public void saveCuenta(CuentaRequestDto cuentaRequestDto) {
         CuentaModelo cuentaModelo = cuentaRequestMapper.toCuenta(cuentaRequestDto);
+        cuentaModelo.getCliente().setIdentificacion(cuentaRequestDto.getIdentificacion());
         cuentaModelo.setEstado(true);
         cuentaServicePort.saveCuenta(cuentaModelo);
     }

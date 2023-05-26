@@ -1,6 +1,7 @@
 package com.devsu.apirest.application.handler.impl;
 
 import com.devsu.apirest.application.dto.request.ClienteRequestDto;
+import com.devsu.apirest.application.dto.request.ClienteUpdateRequestDto;
 import com.devsu.apirest.application.dto.response.ClienteResponseDto;
 import com.devsu.apirest.application.handler.IClienteHandler;
 import com.devsu.apirest.application.mapper.request.IClienteRequestMapper;
@@ -32,5 +33,35 @@ public class ClienteHandler implements IClienteHandler {
     @Override
     public List<ClienteResponseDto> getAllClientes() {
         return clienteResponseMapper.toResponseList(clienteServicePort.getAllClientes());
+    }
+
+    @Override
+    public void deleteClienteById(long id) {
+        clienteServicePort.deleteClienteById(id);
+    }
+
+    @Override
+    public ClienteResponseDto getClienteById(long id) {
+        return clienteResponseMapper.toResponse(clienteServicePort.getClienteById(id));
+    }
+
+    @Override
+    public boolean existsClienteById(long id) {
+        return clienteServicePort.existsClienteById(id);
+    }
+
+    @Override
+    public void updateClienteById(long id, ClienteUpdateRequestDto clienteUpdateRequestDto) {
+        clienteServicePort.updateClienteById(
+                id,
+                clienteRequestMapper.dtoUpdateToCliente(
+                        clienteUpdateRequestDto
+                )
+        );
+    }
+
+    @Override
+    public void editClienteById(long id, ClienteRequestDto clienteRequestDto) {
+        clienteServicePort.editClienteById(id, clienteRequestMapper.toCliente(clienteRequestDto));
     }
 }

@@ -8,4 +8,14 @@ public interface IClientePersistencePort {
     ClienteModelo saveCliente(ClienteModelo clienteModelo);
 
     List<ClienteModelo> getAllClientes();
+
+    ClienteModelo getClienteById(long id);
+
+    boolean existsClienteById(long id);
+
+    void deleteClienteById(long id);
+
+    void updateClienteById(long id, ClienteModelo clienteModelo);
+
+    void editClienteById(long id, ClienteModelo clienteModelo);
 }

@@ -31,4 +31,50 @@ public class ClienteJpaAdapter implements IClientePersistencePort {
         }
         return clienteEntityMapper.toClienteModeloList(entityList);
     }
+
+    @Override
+    public ClienteModelo getClienteById(long id) {
+        ClienteEntidad cliente =
+                clienteRepository.findById(id).orElseThrow(NoDataFoundException::new);
+        return clienteEntityMapper.toClienteModelo(cliente);
+    }
+
+    @Override
+    public boolean existsClienteById(long id) {
+        return clienteRepository.existsById(id);
+    }
+
+    @Override
+    public void deleteClienteById(long id) {
+        if(!existsClienteById(id)) {
+            throw new NoDataFoundException();
+        }
+        clienteRepository.deleteById(id);
+    }
+
+    @Override
+    public void updateClienteById(long id, ClienteModelo clienteModelo) {
+        ClienteModelo cliente = getClienteById(id);
+
+        if(clienteModelo.getNombre() != null) {
+            cliente.setNombre(clienteModelo.getNombre());
+        }
+        if(clienteModelo.getDireccion() != null) {
+            cliente.setDireccion(clienteModelo.getDireccion());
+        }
+        if(clienteModelo.getTelefono() != null) {
+            cliente.setTelefono(clienteModelo.getTelefono());
+        }
+
+        clienteRepository.save(clienteEntityMapper.toEntity(cliente));
+    }
+
+    @Override
+    public void editClienteById(long id, ClienteModelo clienteModelo) {
+        ClienteModelo clienteBefore = getClienteById(id);
+
+        clienteRepository.delete(clienteEntityMapper.toEntity(clienteBefore));
+
+        clienteRepository.save(clienteEntityMapper.toEntity(clienteModelo));
+    }
 }

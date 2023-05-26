@@ -23,4 +23,30 @@ public class ClienteUseCase implements IClienteServicePort {
     public List<ClienteModelo> getAllClientes() {
         return clientePersistencePort.getAllClientes();
     }
+
+    @Override
+    public ClienteModelo getClienteById(long id) {
+        return clientePersistencePort.getClienteById(id);
+    }
+
+    @Override
+    public boolean existsClienteById(long id) {
+        return clientePersistencePort.existsClienteById(id);
+    }
+
+    @Override
+    public void deleteClienteById(long id) {
+        clientePersistencePort.deleteClienteById(id);
+    }
+
+    @Override
+    public void updateClienteById(long id, ClienteModelo clienteModelo) {
+        clientePersistencePort.updateClienteById(id, clienteModelo);
+    }
+
+    @Override
+    public void editClienteById(long id, ClienteModelo clienteModelo) {
+        clientePersistencePort.editClienteById(id, clienteModelo);
+    }
+
 }
