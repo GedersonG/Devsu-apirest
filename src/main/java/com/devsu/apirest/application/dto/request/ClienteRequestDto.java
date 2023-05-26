@@ -21,8 +21,7 @@ public class ClienteRequestDto {
     private String direccion;
 
     @NotEmpty(message = "El numero de telefono es obligatorio.")
-    @Size(min = 8, max = 12, message = "El número de telefono debe contener entre 8 y 12 digitos.")
-    @Pattern(regexp = "^[0-9]{8,12}$", message = "El número de telefono no es valido.")
+    @Pattern(regexp = "^[0-9]{9}$", message = "El número de telefono no es valido.")
     private String telefono;
 
     @NotEmpty(message = "La contraseña es obligatoria.")
@@ -35,7 +34,6 @@ public class ClienteRequestDto {
     @Pattern(regexp = "^[0-9]{6,12}$", message = "El documento solo debe contener números.")
     private String identificacion;
 
-    // @NotEmpty(message = "La edad es obligatoria.")
     @Min(value = 18, message = "Debes ser mayor de edad.")
     @Max(value = 200, message = "Edad inválida.")
     private short edad;

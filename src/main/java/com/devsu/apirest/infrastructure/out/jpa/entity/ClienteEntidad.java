@@ -30,7 +30,6 @@ public class ClienteEntidad extends PersonaEntidad {
     @Column(nullable = false, length = 4)
     private String clave;
 
-    @NotNull
     @Column(nullable = false)
     private boolean estado = true;
 }

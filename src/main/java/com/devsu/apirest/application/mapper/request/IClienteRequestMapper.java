@@ -1,4 +1,4 @@
-package com.devsu.apirest.application.mapper;
+package com.devsu.apirest.application.mapper.request;
 
 import com.devsu.apirest.application.dto.request.ClienteRequestDto;
 import com.devsu.apirest.domain.model.ClienteModelo;

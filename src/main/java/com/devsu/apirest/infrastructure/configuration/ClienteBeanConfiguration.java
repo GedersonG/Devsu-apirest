@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-public class BeanConfiguration {
+public class ClienteBeanConfiguration {
 
     private final IClienteRepository clienteRepository;
     private final IClienteEntityMapper clienteEntidadMapper;

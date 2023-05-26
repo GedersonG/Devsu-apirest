@@ -19,8 +19,7 @@ public class ClienteJpaAdapter implements IClientePersistencePort {
 
     @Override
     public ClienteModelo saveCliente(ClienteModelo clienteModelo) {
-        ClienteEntidad send = clienteEntityMapper.toEntity(clienteModelo);
-        ClienteEntidad clienteEntidad = clienteRepository.save(send);
+        ClienteEntidad clienteEntidad = clienteRepository.save(clienteEntityMapper.toEntity(clienteModelo));
         return clienteEntityMapper.toClienteModelo(clienteEntidad);
     }
 
