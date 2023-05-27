@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,6 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
     private final IMovimientoRepository movimientoRepository;
     private final ICuentaEntityMapper cuentaEntityMapper;
     private final IMovimientoEntityMapper movimientoEntityMapper;
-    private final RestTemplate restTemplate;
 
     @Override
     public MovimientoModelo saveMovimiento(MovimientoModelo movimiento) {
@@ -38,9 +38,12 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         movimiento.setSaldo(movimiento.getCuentaModelo().getSaldoInicial());
 
         // Verficar si hay saldo disponible en caso de retiro
-        if (movimiento.getValor() - movimiento.getSaldo() < 0) {
+        if (movimiento.getSaldo() + movimiento.getValor()  < 0) {
             throw new InsufficientBalanceException();
         }
+
+        // Insertar fecha HOY
+        movimiento.setFecha(new Date());
 
         // Añadir Retiro o Deposito
         movimiento.setTipo(movimiento.getValor() < 0 ? "Retiro" : "Deposito");
