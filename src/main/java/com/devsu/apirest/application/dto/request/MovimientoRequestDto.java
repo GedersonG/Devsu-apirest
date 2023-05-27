@@ -15,5 +15,5 @@ public class MovimientoRequestDto {
     private long valor;
 
     //minmax implemente
-    private long numeroCuenta;
+    private long cuenta;
 }

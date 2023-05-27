@@ -12,8 +12,9 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface ICuentaResponseMapper {
-    CuentaResponseDto toResponse(CuentaModelo cuentaModelo);
 
     @Mapping(target = "nombre", source = "cliente.nombre")
+    CuentaResponseDto toResponse(CuentaModelo cuentaModelo);
+
     List<CuentaResponseDto> toResponseList(List<CuentaModelo> cuentaModeloList);
 }

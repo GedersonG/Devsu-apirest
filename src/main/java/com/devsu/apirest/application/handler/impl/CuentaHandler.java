@@ -31,12 +31,7 @@ public class CuentaHandler implements ICuentaHandler {
 
     @Override
     public List<CuentaResponseDto> getAllCuentas () {
-        List<CuentaModelo> cuentaModeloList = cuentaServicePort.getAllCuentas();
-        List<CuentaResponseDto> cuentaResponseDtoList = cuentaResponseMapper.toResponseList(cuentaServicePort.getAllCuentas());
-        for (int i = 0; i < cuentaModeloList.size(); i++) {
-            cuentaResponseDtoList.get(i).setNombre(cuentaModeloList.get(i).getCliente().getNombre());
-        }
-        return cuentaResponseDtoList;
+        return cuentaResponseMapper.toResponseList(cuentaServicePort.getAllCuentas());
     }
 
     @Override

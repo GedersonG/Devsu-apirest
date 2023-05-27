@@ -75,6 +75,6 @@ public class ClienteJpaAdapter implements IClientePersistencePort {
 
         clienteRepository.delete(clienteEntityMapper.toEntity(clienteBefore));
 
-        clienteRepository.save(clienteEntityMapper.toEntity(clienteModelo));
+        saveCliente(clienteModelo);
     }
 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Getter
@@ -22,7 +23,7 @@ public class MovimientoEntidad {
     private long movimientoId;
 
     @Column(nullable = false)
-    private Date fecha = new Date();
+    private String fecha = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
 
     @Column(nullable = false)
     private String tipo;

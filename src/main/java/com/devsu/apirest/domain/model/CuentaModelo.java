@@ -1,5 +1,8 @@
 package com.devsu.apirest.domain.model;
 
+import lombok.ToString;
+
+@ToString
 public class CuentaModelo {
 
     private long numeroCuenta;

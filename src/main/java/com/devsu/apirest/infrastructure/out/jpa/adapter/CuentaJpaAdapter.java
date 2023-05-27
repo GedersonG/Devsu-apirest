@@ -33,9 +33,6 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
         CuentaEntidad cuentaEntidad = cuentaRepository.save(
                 cuentaEntityMapper.toEntity(cuenta)
         );
-        cuentaEntidad.getCliente().setIdentificacion(
-                cuenta.getCliente().getIdentificacion()
-        );
 
         return cuentaEntityMapper.toCuentaModelo(cuentaEntidad);
     }
@@ -84,7 +81,6 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
 
         cuentaRepository.delete(cuentaEntityMapper.toEntity(cuentaBefore));
 
-        System.out.println("TOSTRING: " + cuentaModelo.getCliente().getIdentificacion()); //null
         saveCuenta(cuentaModelo);
     }
 }

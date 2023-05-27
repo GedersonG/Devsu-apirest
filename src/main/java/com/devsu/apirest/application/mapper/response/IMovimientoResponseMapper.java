@@ -13,8 +13,8 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface IMovimientoResponseMapper {
 
+    @Mapping(target = "cuenta", source = "cuenta.numeroCuenta")
     MovimientoResponseDto toResponse(MovimientoModelo movimientoModelo);
 
-    @Mapping(target = "cuenta", source = "cuenta.numeroCuenta")
     List<MovimientoResponseDto> toResponseList(List<MovimientoModelo> movimientoModeloList);
 }

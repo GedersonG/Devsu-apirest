@@ -10,7 +10,7 @@ import java.util.Date;
 public class MovimientoResponseDto {
 
     private long movimientoId;
-    private Date fecha;
+    private String fecha;
     private String tipo;
     private long valor;
     private long saldo;

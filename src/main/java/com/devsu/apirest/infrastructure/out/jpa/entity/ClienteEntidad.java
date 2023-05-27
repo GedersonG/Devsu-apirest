@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 public class ClienteEntidad extends PersonaEntidad {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "id_cliente")
     private Long clienteId;
 

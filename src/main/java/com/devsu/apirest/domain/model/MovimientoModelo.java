@@ -5,19 +5,19 @@ import java.util.Date;
 public class MovimientoModelo {
 
     private long movimientoId;
-    private Date fecha;
+    private String fecha;
     private String tipo;
     private long valor;
     private long saldo;
-    private CuentaModelo cuentaModelo;
+    private CuentaModelo cuenta;
 
-    public MovimientoModelo(long movimientoId, Date fecha, String tipo, long valor, long saldo, CuentaModelo cuentaModelo) {
+    public MovimientoModelo(long movimientoId, String fecha, String tipo, long valor, long saldo, CuentaModelo cuenta) {
         this.movimientoId = movimientoId;
         this.fecha = fecha;
         this.tipo = tipo;
         this.valor = valor;
         this.saldo = saldo;
-        this.cuentaModelo = cuentaModelo;
+        this.cuenta = cuenta;
     }
 
     public MovimientoModelo() {
@@ -31,11 +31,11 @@ public class MovimientoModelo {
         this.movimientoId = movimientoId;
     }
 
-    public Date getFecha() {
+    public String getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(String fecha) {
         this.fecha = fecha;
     }
 
@@ -63,11 +63,11 @@ public class MovimientoModelo {
         this.saldo = saldo;
     }
 
-    public CuentaModelo getCuentaModelo() {
-        return cuentaModelo;
+    public CuentaModelo getCuenta() {
+        return cuenta;
     }
 
-    public void setCuentaModelo(CuentaModelo cuentaModelo) {
-        this.cuentaModelo = cuentaModelo;
+    public void setCuenta(CuentaModelo cuentaModelo) {
+        this.cuenta = cuentaModelo;
     }
 }

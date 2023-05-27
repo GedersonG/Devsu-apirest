@@ -1,5 +1,6 @@
 package com.devsu.apirest.infrastructure.out.jpa.adapter;
 
+import com.devsu.apirest.domain.model.CuentaModelo;
 import com.devsu.apirest.domain.model.MovimientoModelo;
 import com.devsu.apirest.domain.spi.IMovimientoPersistencePort;
 import com.devsu.apirest.infrastructure.exception.InsufficientBalanceException;
@@ -11,12 +12,10 @@ import com.devsu.apirest.infrastructure.out.jpa.mapper.IMovimientoEntityMapper;
 import com.devsu.apirest.infrastructure.out.jpa.repository.ICuentaRepository;
 import com.devsu.apirest.infrastructure.out.jpa.repository.IMovimientoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.web.client.RestTemplate;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
@@ -30,12 +29,13 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
     public MovimientoModelo saveMovimiento(MovimientoModelo movimiento) {
         // Obtenemos la cuenta por numero de cuenta
         CuentaEntidad cuenta = cuentaRepository.findById(
-                        movimiento.getCuentaModelo().getNumeroCuenta()
+                        movimiento.getCuenta().getNumeroCuenta()
                 ).orElseThrow(NoDataFoundException::new);
-        movimiento.setCuentaModelo(
+        movimiento.setCuenta(
                 cuentaEntityMapper.toCuentaModelo(cuenta)
         );
-        movimiento.setSaldo(movimiento.getCuentaModelo().getSaldoInicial());
+
+        movimiento.setSaldo(movimiento.getCuenta().getSaldoInicial());
 
         // Verficar si hay saldo disponible en caso de retiro
         if (movimiento.getSaldo() + movimiento.getValor()  < 0) {
@@ -43,14 +43,14 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         }
 
         // Insertar fecha HOY
-        movimiento.setFecha(new Date());
+        movimiento.setFecha(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
 
         // Añadir Retiro o Deposito
         movimiento.setTipo(movimiento.getValor() < 0 ? "Retiro" : "Deposito");
 
         // Calcular nuevo saldo
         movimiento.setSaldo(
-                movimiento.getCuentaModelo().getSaldoInicial() +
+                movimiento.getCuenta().getSaldoInicial() +
                         movimiento.getValor()
         );
 
@@ -63,9 +63,6 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         cuenta.setSaldoInicial(movimiento.getSaldo());
         cuentaRepository.save(cuenta);
 
-        //movimientoEntidad.getCuenta().setNumeroCuenta(
-        //        movimiento.getCuentaModelo().getNumeroCuenta()
-        //);
         return movimientoEntityMapper.toMovimientoModelo(movimientoEntidad);
     }
 
@@ -109,14 +106,10 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
 
     @Override
     public void editMovimientoById(long id, MovimientoModelo movimientoModelo) {
+        MovimientoModelo movimientoBefore = getMovimientoById(id);
 
-    }
+        movimientoRepository.delete(movimientoEntityMapper.toEntity(movimientoBefore));
 
-    private CuentaEntidad verifyCuenta (MovimientoModelo movimiento) {
-        CuentaEntidad cuenta =
-                cuentaRepository.findById(
-                        movimiento.getCuentaModelo().getNumeroCuenta()
-                ).orElseThrow(NoDataFoundException::new);
-        return cuenta;
+        saveMovimiento(movimientoModelo);
     }
 }
