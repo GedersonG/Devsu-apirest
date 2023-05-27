@@ -23,6 +23,15 @@ public class MovimientoModelo {
     public MovimientoModelo() {
     }
 
+    public MovimientoModelo(MovimientoModelo movimiento) {
+        this.movimientoId = movimiento.getMovimientoId();
+        this.tipo = movimiento.getTipo();
+        this.fecha = movimiento.getFecha();
+        this.valor = movimiento.getValor();
+        this.saldo = movimiento.getSaldo();
+        this.cuenta = movimiento.getCuenta();
+    }
+
     public long getMovimientoId() {
         return movimientoId;
     }

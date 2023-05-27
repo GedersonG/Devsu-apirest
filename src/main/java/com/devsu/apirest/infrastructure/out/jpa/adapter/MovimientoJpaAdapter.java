@@ -1,8 +1,8 @@
 package com.devsu.apirest.infrastructure.out.jpa.adapter;
 
-import com.devsu.apirest.domain.model.CuentaModelo;
 import com.devsu.apirest.domain.model.MovimientoModelo;
 import com.devsu.apirest.domain.spi.IMovimientoPersistencePort;
+import com.devsu.apirest.infrastructure.exception.DailyQuotaExceededException;
 import com.devsu.apirest.infrastructure.exception.InsufficientBalanceException;
 import com.devsu.apirest.infrastructure.exception.NoDataFoundException;
 import com.devsu.apirest.infrastructure.out.jpa.entity.CuentaEntidad;
@@ -27,41 +27,22 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
 
     @Override
     public MovimientoModelo saveMovimiento(MovimientoModelo movimiento) {
-        // Obtenemos la cuenta por numero de cuenta
-        CuentaEntidad cuenta = cuentaRepository.findById(
-                        movimiento.getCuenta().getNumeroCuenta()
-                ).orElseThrow(NoDataFoundException::new);
-        movimiento.setCuenta(
-                cuentaEntityMapper.toCuentaModelo(cuenta)
+
+        // Operaciones de verificacion de datos de entrada
+        CuentaEntidad cuenta = operationsVerify(
+                movimiento.getCuenta().getSaldoInicial(),
+                movimiento.getValor(),
+                movimiento.getCuenta().getNumeroCuenta()
         );
 
-        movimiento.setSaldo(movimiento.getCuenta().getSaldoInicial());
+        // Operaciones para el calculo del movimiento y asignacion de valores
+        calculateMovimiento(movimiento, cuenta);
 
-        // Verficar si hay saldo disponible en caso de retiro
-        if (movimiento.getSaldo() + movimiento.getValor()  < 0) {
-            throw new InsufficientBalanceException();
-        }
-
-        // Insertar fecha HOY
-        movimiento.setFecha(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-
-        // Añadir Retiro o Deposito
-        movimiento.setTipo(movimiento.getValor() < 0 ? "Retiro" : "Deposito");
-
-        // Calcular nuevo saldo
-        movimiento.setSaldo(
-                movimiento.getCuenta().getSaldoInicial() +
-                        movimiento.getValor()
-        );
-
-        // Guardar movimiento
+        // Guardar movimiento y registro en la cuenta
+        cuentaRepository.save(cuenta);
         MovimientoEntidad movimientoEntidad = movimientoRepository.save(
                 movimientoEntityMapper.toEntity(movimiento)
         );
-
-        // Actualizar saldo inicial de la cuenta
-        cuenta.setSaldoInicial(movimiento.getSaldo());
-        cuentaRepository.save(cuenta);
 
         return movimientoEntityMapper.toMovimientoModelo(movimientoEntidad);
     }
@@ -72,23 +53,23 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         if (entityList.isEmpty()) {
             throw new NoDataFoundException();
         }
+
         return movimientoEntityMapper.toMovimientoModeloList(entityList);
     }
 
     @Override
-    public boolean existsMovimientoById(long id) {
+    public boolean existsMovimientoById(long id){
         return movimientoRepository.existsById(id);
     }
-
     @Override
-    public MovimientoModelo getMovimientoById(long id) {
+    public MovimientoModelo getMovimientoById(long id){
         MovimientoEntidad movimiento =
                 movimientoRepository.findById(id).orElseThrow(NoDataFoundException::new);
         return movimientoEntityMapper.toMovimientoModelo(movimiento);
     }
 
     @Override
-    public void deleteMovimientoById(long id) {
+    public void deleteMovimientoById(long id){
         if (!existsMovimientoById(id)) {
             throw new NoDataFoundException();
         }
@@ -96,7 +77,7 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
     }
 
     @Override
-    public void updateMovimientoById(long id, MovimientoModelo movimientoModelo) {
+    public void updateMovimientoById(long id, MovimientoModelo movimientoModelo){
         MovimientoModelo movimiento = getMovimientoById(id);
 
         movimiento.setValor(movimientoModelo.getValor());
@@ -105,11 +86,87 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
     }
 
     @Override
-    public void editMovimientoById(long id, MovimientoModelo movimientoModelo) {
+    public void editMovimientoById(long id, MovimientoModelo movimientoModelo){
         MovimientoModelo movimientoBefore = getMovimientoById(id);
 
         movimientoRepository.delete(movimientoEntityMapper.toEntity(movimientoBefore));
 
         saveMovimiento(movimientoModelo);
+    }
+
+    private CuentaEntidad verifyAccount(long numeroCuenta) {
+
+        // Verifica que la cuenta existe y la retorna
+        return cuentaRepository
+                .findById(numeroCuenta)
+                .orElseThrow(NoDataFoundException::new);
+    }
+
+    private String getFechaToday() {
+        return new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+    }
+
+    private int getValorTotalToday(long cuenta) {
+
+        // Obtiene el monto total de retiro de HOY
+        return movimientoRepository
+                .sumValorByFecha(getFechaToday(), cuenta).orElse(0);
+    }
+
+    private void verifyQuota(long numeroCuenta, long valor) {
+
+        //Verifica si la cuota ya excedió o va a exceder en caso de retiro.
+        if (
+                getValorTotalToday(numeroCuenta)
+                        == -1000 ||
+                valor + getValorTotalToday(numeroCuenta)
+                        < -1000
+        ) {
+            throw new DailyQuotaExceededException();
+        }
+    }
+
+    private void verifyBalance(long saldoInicial, long valor) {
+        if (saldoInicial + valor < 0) {
+            throw new InsufficientBalanceException();
+        }
+    }
+
+    private CuentaEntidad operationsVerify(long saldoInicial, long valor, long numeroCuenta) {
+
+        //Verifica que la cuenta existe
+        CuentaEntidad cuenta = verifyAccount(numeroCuenta);
+
+        // Verficar si hay saldo disponible en caso de retiro
+        verifyBalance(saldoInicial, valor);
+
+        // Verificar si excede cupo maximo diario
+        verifyQuota(saldoInicial, valor);
+
+        return cuenta;
+    }
+
+    private void calculateMovimiento(
+            MovimientoModelo movimiento,
+            CuentaEntidad cuenta
+    ) {
+
+        // Se asigna la cuenta al movimiento
+        movimiento.setCuenta(
+                cuentaEntityMapper.toCuentaModelo(cuenta)
+        );
+
+        // Insertar fecha HOY
+        movimiento.setFecha(getFechaToday());
+
+        // Añadir retiro o deposito y calcular nuevo saldo
+        movimiento.setTipo(movimiento.getValor() < 0 ? "Retiro" : "Deposito");
+        movimiento.setSaldo(
+                movimiento.getCuenta().getSaldoInicial() +
+                        movimiento.getValor()
+        );
+
+        // Actualizar saldo inicial de la cuenta
+        cuenta.setSaldoInicial(movimiento.getSaldo());
     }
 }

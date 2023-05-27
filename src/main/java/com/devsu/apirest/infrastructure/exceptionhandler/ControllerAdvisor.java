@@ -1,5 +1,7 @@
 package com.devsu.apirest.infrastructure.exceptionhandler;
 
+import com.devsu.apirest.infrastructure.exception.AlreadyExistsException;
+import com.devsu.apirest.infrastructure.exception.DailyQuotaExceededException;
 import com.devsu.apirest.infrastructure.exception.InsufficientBalanceException;
 import com.devsu.apirest.infrastructure.exception.NoDataFoundException;
 import org.springframework.http.HttpStatus;
@@ -27,13 +29,27 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(InsufficientBalanceException.class)
     public ResponseEntity<Map<String, String>> handleInsufficientBalanceException(
-            InsufficientBalanceException balanceException) {
+            InsufficientBalanceException ignoredBalanceException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.INSUFFICIENT_BALANCE.getMessage()));
     }
 
+    @ExceptionHandler(DailyQuotaExceededException.class)
+    public ResponseEntity<Map<String, String>> handleDailyQuotaExceededException(
+            DailyQuotaExceededException ignoredQuotaExceededException) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.DAILY_QUOTA_EXCEEDED.getMessage()));
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleAlreadyExistsException(
+            DailyQuotaExceededException ignoredAlreadyExistsException) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ALREADY_EXISTS.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleClienteArgumentNotValidException(
+    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
