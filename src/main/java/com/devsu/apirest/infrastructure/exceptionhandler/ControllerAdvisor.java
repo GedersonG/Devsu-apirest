@@ -1,9 +1,6 @@
 package com.devsu.apirest.infrastructure.exceptionhandler;
 
-import com.devsu.apirest.infrastructure.exception.AlreadyExistsException;
-import com.devsu.apirest.infrastructure.exception.DailyQuotaExceededException;
-import com.devsu.apirest.infrastructure.exception.InsufficientBalanceException;
-import com.devsu.apirest.infrastructure.exception.NoDataFoundException;
+import com.devsu.apirest.infrastructure.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -46,6 +43,13 @@ public class ControllerAdvisor {
             DailyQuotaExceededException ignoredAlreadyExistsException) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ALREADY_EXISTS.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidDateException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidDateException(
+            InvalidDateException ignoredInvalidDateException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.INVALID_DATE.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -1,4 +1,4 @@
-package com.devsu.apirest.application.dto.response;
+package com.devsu.apirest.application.dto.response.cliente;
 
 import lombok.Getter;
 import lombok.Setter;

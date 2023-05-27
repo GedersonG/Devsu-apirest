@@ -1,10 +1,9 @@
 package com.devsu.apirest.application.mapper.request;
 
-import com.devsu.apirest.application.dto.request.CuentaRequestDto;
-import com.devsu.apirest.application.dto.request.CuentaUpdateRequestDto;
+import com.devsu.apirest.application.dto.request.cuenta.CuentaRequestDto;
+import com.devsu.apirest.application.dto.request.cuenta.CuentaUpdateRequestDto;
 import com.devsu.apirest.domain.model.CuentaModelo;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring",

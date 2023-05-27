@@ -1,4 +1,4 @@
-package com.devsu.apirest.application.dto.request;
+package com.devsu.apirest.application.dto.request.cuenta;
 
 import lombok.Getter;
 import lombok.Setter;

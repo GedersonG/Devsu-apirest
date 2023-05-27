@@ -4,7 +4,8 @@ public enum ExceptionResponse {
     NO_DATA_FOUND("No se encontraron datos asociados a la peticion requerida"),
     INSUFFICIENT_BALANCE("Saldo no disponible"),
     DAILY_QUOTA_EXCEEDED("Cupo diario excedido"),
-    ALREADY_EXISTS("Ya existe un recurso con esos datos");
+    ALREADY_EXISTS("Ya existe un recurso con esos datos"),
+    INVALID_DATE("Las fechas insertadas no son válidas");
 
     private final String message;
 

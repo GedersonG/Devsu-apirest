@@ -1,9 +1,7 @@
-package com.devsu.apirest.application.dto.response;
+package com.devsu.apirest.application.dto.response.movimiento;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
 
 @Getter
 @Setter

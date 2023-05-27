@@ -1,8 +1,9 @@
 package com.devsu.apirest.application.handler;
 
-import com.devsu.apirest.application.dto.request.MovimientoRequestDto;
-import com.devsu.apirest.application.dto.request.MovimientoUpdateRequestDto;
-import com.devsu.apirest.application.dto.response.MovimientoResponseDto;
+import com.devsu.apirest.application.dto.request.movimiento.MovimientoRequestDto;
+import com.devsu.apirest.application.dto.request.movimiento.MovimientoUpdateRequestDto;
+import com.devsu.apirest.application.dto.response.movimiento.MovimientoResponseDto;
+import com.devsu.apirest.application.dto.response.reporte.ReporteResponseDto;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface IMovimientoHandler {
     void updateMovimientoById (long id, MovimientoUpdateRequestDto movimientoUpdateRequestDto);
 
     void editMovimientoById (long id, MovimientoRequestDto movimientoRequestDto);
+
+    List<ReporteResponseDto> getReportesByIdentificacion(String identificacion, String[] fecha);
 }

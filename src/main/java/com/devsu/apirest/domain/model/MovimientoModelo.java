@@ -1,7 +1,5 @@
 package com.devsu.apirest.domain.model;
 
-import java.util.Date;
-
 public class MovimientoModelo {
 
     private long movimientoId;
@@ -21,15 +19,6 @@ public class MovimientoModelo {
     }
 
     public MovimientoModelo() {
-    }
-
-    public MovimientoModelo(MovimientoModelo movimiento) {
-        this.movimientoId = movimiento.getMovimientoId();
-        this.tipo = movimiento.getTipo();
-        this.fecha = movimiento.getFecha();
-        this.valor = movimiento.getValor();
-        this.saldo = movimiento.getSaldo();
-        this.cuenta = movimiento.getCuenta();
     }
 
     public long getMovimientoId() {

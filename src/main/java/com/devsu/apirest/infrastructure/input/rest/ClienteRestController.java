@@ -1,8 +1,8 @@
 package com.devsu.apirest.infrastructure.input.rest;
 
-import com.devsu.apirest.application.dto.request.ClienteRequestDto;
-import com.devsu.apirest.application.dto.request.ClienteUpdateRequestDto;
-import com.devsu.apirest.application.dto.response.ClienteResponseDto;
+import com.devsu.apirest.application.dto.request.cliente.ClienteRequestDto;
+import com.devsu.apirest.application.dto.request.cliente.ClienteUpdateRequestDto;
+import com.devsu.apirest.application.dto.response.cliente.ClienteResponseDto;
 import com.devsu.apirest.application.handler.IClienteHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

@@ -1,10 +1,13 @@
 package com.devsu.apirest.infrastructure.out.jpa.adapter;
 
+import com.devsu.apirest.application.dto.response.reporte.ReporteResponseDto;
 import com.devsu.apirest.domain.model.MovimientoModelo;
 import com.devsu.apirest.domain.spi.IMovimientoPersistencePort;
 import com.devsu.apirest.infrastructure.exception.DailyQuotaExceededException;
 import com.devsu.apirest.infrastructure.exception.InsufficientBalanceException;
+import com.devsu.apirest.infrastructure.exception.InvalidDateException;
 import com.devsu.apirest.infrastructure.exception.NoDataFoundException;
+import com.devsu.apirest.infrastructure.out.jpa.entity.ClienteEntidad;
 import com.devsu.apirest.infrastructure.out.jpa.entity.CuentaEntidad;
 import com.devsu.apirest.infrastructure.out.jpa.entity.MovimientoEntidad;
 import com.devsu.apirest.infrastructure.out.jpa.mapper.ICuentaEntityMapper;
@@ -13,7 +16,10 @@ import com.devsu.apirest.infrastructure.out.jpa.repository.ICuentaRepository;
 import com.devsu.apirest.infrastructure.out.jpa.repository.IMovimientoRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -94,6 +100,60 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         saveMovimiento(movimientoModelo);
     }
 
+    @Override
+    public List<ReporteResponseDto> getReportesByIdentificacion(String identificacion, String[] fechas) {
+
+        List<CuentaEntidad> cuentas = cuentaRepository.findAllByIdentificacion(identificacion);
+
+        if (cuentas.isEmpty()) {
+            throw new NoDataFoundException();
+        }
+
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+        Date[] fechasDate = isFechasValid(fechas, formatoFecha);
+
+        if (fechasDate[0].after(fechasDate[1])) {
+            throw new InvalidDateException();
+        }
+
+        List<ReporteResponseDto> reportes = new ArrayList<ReporteResponseDto>();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fechasDate[0]);
+
+        while (!calendar.getTime().after(fechasDate[1])) {
+            // Realizar la operación por cada día
+            List<Object[]> res = movimientoRepository.getReporte(
+                   identificacion,
+                   formatoFecha.format(calendar.getTime()));
+
+            for (Object[] report : res) {
+
+                String fecha = (String) report[0];
+                long numeroCuenta = (long) report[1];
+                String tipoCuenta = (String) report[2];
+                long valor = (long) report[4];
+                long saldo = (long) report[5];
+                long saldoInicial = ((long) report[3]) - valor;
+                String nombreCliente = (String) report[6];
+
+                reportes.add(ReporteResponseDto.builder()
+                                .fecha(fecha)
+                                .nombre(nombreCliente)
+                                .numeroCuenta(numeroCuenta)
+                                .tipoCuenta(tipoCuenta)
+                                .saldoInicial(saldoInicial)
+                                .valor(valor).saldo(saldo)
+                                .build()
+                );
+            }
+
+            // Avanzar al siguiente día
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        return reportes;
+    }
+
     private CuentaEntidad verifyAccount(long numeroCuenta) {
 
         // Verifica que la cuenta existe y la retorna
@@ -168,5 +228,23 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
 
         // Actualizar saldo inicial de la cuenta
         cuenta.setSaldoInicial(movimiento.getSaldo());
+    }
+
+    private Date[] isFechasValid(String[] fechas, SimpleDateFormat formatoFecha) {
+        if(fechas.length != 2) {
+            throw new InvalidDateException();
+        }
+
+        formatoFecha.setLenient(false); // No permite fechas inválidas, como 30/02/2023
+        try {
+            Date[] fechasDate = new Date[2];
+
+            fechasDate[0] = formatoFecha.parse(fechas[0]);
+            fechasDate[1] = formatoFecha.parse(fechas[1]);
+
+            return fechasDate;
+        } catch (ParseException e) {
+            throw new InvalidDateException();
+        }
     }
 }

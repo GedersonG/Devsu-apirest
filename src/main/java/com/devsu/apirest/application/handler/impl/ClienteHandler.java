@@ -1,8 +1,8 @@
 package com.devsu.apirest.application.handler.impl;
 
-import com.devsu.apirest.application.dto.request.ClienteRequestDto;
-import com.devsu.apirest.application.dto.request.ClienteUpdateRequestDto;
-import com.devsu.apirest.application.dto.response.ClienteResponseDto;
+import com.devsu.apirest.application.dto.request.cliente.ClienteRequestDto;
+import com.devsu.apirest.application.dto.request.cliente.ClienteUpdateRequestDto;
+import com.devsu.apirest.application.dto.response.cliente.ClienteResponseDto;
 import com.devsu.apirest.application.handler.IClienteHandler;
 import com.devsu.apirest.application.mapper.request.IClienteRequestMapper;
 import com.devsu.apirest.application.mapper.response.IClienteResponseMapper;

@@ -1,8 +1,8 @@
 package com.devsu.apirest.application.handler;
 
-import com.devsu.apirest.application.dto.request.CuentaRequestDto;
-import com.devsu.apirest.application.dto.request.CuentaUpdateRequestDto;
-import com.devsu.apirest.application.dto.response.CuentaResponseDto;
+import com.devsu.apirest.application.dto.request.cuenta.CuentaRequestDto;
+import com.devsu.apirest.application.dto.request.cuenta.CuentaUpdateRequestDto;
+import com.devsu.apirest.application.dto.response.cuenta.CuentaResponseDto;
 
 import java.util.List;
 

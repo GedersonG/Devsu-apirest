@@ -1,8 +1,8 @@
 package com.devsu.apirest.infrastructure.input.rest;
 
-import com.devsu.apirest.application.dto.request.MovimientoRequestDto;
-import com.devsu.apirest.application.dto.request.MovimientoUpdateRequestDto;
-import com.devsu.apirest.application.dto.response.MovimientoResponseDto;
+import com.devsu.apirest.application.dto.request.movimiento.MovimientoRequestDto;
+import com.devsu.apirest.application.dto.request.movimiento.MovimientoUpdateRequestDto;
+import com.devsu.apirest.application.dto.response.movimiento.MovimientoResponseDto;
 import com.devsu.apirest.application.handler.IMovimientoHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

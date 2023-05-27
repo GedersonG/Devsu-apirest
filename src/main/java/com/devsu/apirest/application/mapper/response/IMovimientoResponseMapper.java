@@ -1,6 +1,6 @@
 package com.devsu.apirest.application.mapper.response;
 
-import com.devsu.apirest.application.dto.response.MovimientoResponseDto;
+import com.devsu.apirest.application.dto.response.movimiento.MovimientoResponseDto;
 import com.devsu.apirest.domain.model.MovimientoModelo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

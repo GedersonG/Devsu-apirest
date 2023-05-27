@@ -1,8 +1,8 @@
 package com.devsu.apirest.application.handler.impl;
 
-import com.devsu.apirest.application.dto.request.CuentaRequestDto;
-import com.devsu.apirest.application.dto.request.CuentaUpdateRequestDto;
-import com.devsu.apirest.application.dto.response.CuentaResponseDto;
+import com.devsu.apirest.application.dto.request.cuenta.CuentaRequestDto;
+import com.devsu.apirest.application.dto.request.cuenta.CuentaUpdateRequestDto;
+import com.devsu.apirest.application.dto.response.cuenta.CuentaResponseDto;
 import com.devsu.apirest.application.handler.ICuentaHandler;
 import com.devsu.apirest.application.mapper.request.ICuentaRequestMapper;
 import com.devsu.apirest.application.mapper.response.ICuentaResponseMapper;
