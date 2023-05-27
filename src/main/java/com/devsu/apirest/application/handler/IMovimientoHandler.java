@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface IMovimientoHandler {
 
-    void saveMovimiento(MovimientoRequestDto movimientoRequestDto);
+    void saveMovimiento (MovimientoRequestDto movimientoRequestDto);
 
-    List<MovimientoResponseDto> getAllMovimientos();
+    List<MovimientoResponseDto> getAllMovimientos ();
 
-    void deleteMovimientoById(long id);
+    void deleteMovimientoById (long id);
 
-    MovimientoResponseDto getMovimientoById(long id);
+    MovimientoResponseDto getMovimientoById (long id);
 
-    void updateMovimientoById(long id, MovimientoUpdateRequestDto movimientoUpdateRequestDto);
+    void updateMovimientoById (long id, MovimientoUpdateRequestDto movimientoUpdateRequestDto);
 
-    void editMovimientoById(long id, MovimientoRequestDto movimientoRequestDto);
+    void editMovimientoById (long id, MovimientoRequestDto movimientoRequestDto);
 }

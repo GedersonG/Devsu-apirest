@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface ICuentaHandler {
 
-    void saveCuenta(CuentaRequestDto cuentaRequestDto);
+    void saveCuenta (CuentaRequestDto cuentaRequestDto);
 
-    List<CuentaResponseDto> getAllCuentas();
+    List<CuentaResponseDto> getAllCuentas ();
 
-    void deleteCuentaById(long id);
+    void deleteCuentaById (long id);
 
-    CuentaResponseDto getCuentaById(long id);
+    CuentaResponseDto getCuentaById (long id);
 
-    void updateCuentaById(long id, CuentaUpdateRequestDto cuentaUpdateRequestDto);
+    void updateCuentaById (long id, CuentaUpdateRequestDto cuentaUpdateRequestDto);
 
-    void editCuentaById(long id, CuentaRequestDto cuentaRequestDto);
+    void editCuentaById (long id, CuentaRequestDto cuentaRequestDto);
 }

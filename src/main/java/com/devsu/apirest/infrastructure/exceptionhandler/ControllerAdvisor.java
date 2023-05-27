@@ -1,5 +1,6 @@
 package com.devsu.apirest.infrastructure.exceptionhandler;
 
+import com.devsu.apirest.infrastructure.exception.InsufficientBalanceException;
 import com.devsu.apirest.infrastructure.exception.NoDataFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,13 @@ public class ControllerAdvisor {
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.NO_DATA_FOUND.getMessage()));
     }
 
+    @ExceptionHandler(InsufficientBalanceException.class)
+    public ResponseEntity<Map<String, String>> handleInsufficientBalanceException(
+            InsufficientBalanceException balanceException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.INSUFFICIENT_BALANCE.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleClienteArgumentNotValidException(
             MethodArgumentNotValidException ex) {
@@ -31,10 +39,9 @@ public class ControllerAdvisor {
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+            errors.put(fieldName + "-error", errorMessage);
         });
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(errors);
     }
-    
 }

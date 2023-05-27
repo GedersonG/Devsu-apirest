@@ -13,6 +13,7 @@ public class CuentaUseCase implements ICuentaServicePort {
     public CuentaUseCase(ICuentaPersistencePort cuentaPersistencePort) {
         this.cuentaPersistencePort = cuentaPersistencePort;
     }
+
     @Override
     public void saveCuenta(CuentaModelo cuenta) {
         cuentaPersistencePort.saveCuenta(cuenta);

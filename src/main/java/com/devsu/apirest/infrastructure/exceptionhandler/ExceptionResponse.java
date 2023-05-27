@@ -1,7 +1,8 @@
 package com.devsu.apirest.infrastructure.exceptionhandler;
 
 public enum ExceptionResponse {
-    NO_DATA_FOUND("No se encontraron datos asociados a la peticion requerida");
+    NO_DATA_FOUND("No se encontraron datos asociados a la peticion requerida"),
+    INSUFFICIENT_BALANCE("Saldo no disponible");
 
     private final String message;
 

@@ -29,8 +29,14 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
                         cuenta.getCliente().getIdentificacion()
                 ).orElseThrow(NoDataFoundException::new);
         cuenta.setCliente(clienteEntityMapper.toClienteModelo(cliente));
-        CuentaEntidad cuentaEntidad = cuentaRepository.save(cuentaEntityMapper.toEntity(cuenta));
-        cuentaEntidad.getCliente().setIdentificacion(cuentaEntidad.getCliente().getIdentificacion());
+
+        CuentaEntidad cuentaEntidad = cuentaRepository.save(
+                cuentaEntityMapper.toEntity(cuenta)
+        );
+        cuentaEntidad.getCliente().setIdentificacion(
+                cuenta.getCliente().getIdentificacion()
+        );
+
         return cuentaEntityMapper.toCuentaModelo(cuentaEntidad);
     }
 
