@@ -22,4 +22,24 @@ public class CuentaUseCase implements ICuentaServicePort {
     public List<CuentaModelo> getAllCuentas() {
         return cuentaPersistencePort.getAllCuentas();
     }
+
+    @Override
+    public CuentaModelo getCuentaById(long id) {
+        return cuentaPersistencePort.getCuentaById(id);
+    }
+
+    @Override
+    public void deleteCuentaById(long id) {
+        cuentaPersistencePort.deleteCuentaById(id);
+    }
+
+    @Override
+    public void updateCuentaById(long id, CuentaModelo cuentaModelo) {
+        cuentaPersistencePort.updateCuentaById(id, cuentaModelo);
+    }
+
+    @Override
+    public void editCuentaById(long id, CuentaModelo cuentaModelo) {
+        cuentaPersistencePort.editCuentaById(id, cuentaModelo);
+    }
 }

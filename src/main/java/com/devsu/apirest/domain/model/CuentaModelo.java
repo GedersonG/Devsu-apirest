@@ -1,5 +1,8 @@
 package com.devsu.apirest.domain.model;
 
+import lombok.ToString;
+
+@ToString
 public class CuentaModelo {
 
     private long numeroCuenta;
@@ -39,7 +42,7 @@ public class CuentaModelo {
         return saldoInicial;
     }
 
-    public void setSaldoInicial(int saldoInicial) {
+    public void setSaldoInicial(long saldoInicial) {
         this.saldoInicial = saldoInicial;
     }
 

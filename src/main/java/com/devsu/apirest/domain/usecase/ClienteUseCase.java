@@ -30,11 +30,6 @@ public class ClienteUseCase implements IClienteServicePort {
     }
 
     @Override
-    public boolean existsClienteById(long id) {
-        return clientePersistencePort.existsClienteById(id);
-    }
-
-    @Override
     public void deleteClienteById(long id) {
         clientePersistencePort.deleteClienteById(id);
     }
@@ -48,5 +43,4 @@ public class ClienteUseCase implements IClienteServicePort {
     public void editClienteById(long id, ClienteModelo clienteModelo) {
         clientePersistencePort.editClienteById(id, clienteModelo);
     }
-
 }

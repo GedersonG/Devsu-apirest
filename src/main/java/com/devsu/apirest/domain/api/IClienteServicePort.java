@@ -1,7 +1,5 @@
 package com.devsu.apirest.domain.api;
 
-import com.devsu.apirest.application.dto.request.ClienteRequestDto;
-import com.devsu.apirest.application.dto.request.ClienteUpdateRequestDto;
 import com.devsu.apirest.domain.model.ClienteModelo;
 
 import java.util.List;
@@ -13,8 +11,6 @@ public interface IClienteServicePort {
     List<ClienteModelo> getAllClientes();
 
     ClienteModelo getClienteById(long id);
-
-    boolean existsClienteById(long id);
 
     void deleteClienteById(long id);
 

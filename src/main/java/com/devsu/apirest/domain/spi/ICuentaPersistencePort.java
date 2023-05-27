@@ -8,4 +8,14 @@ public interface ICuentaPersistencePort {
     CuentaModelo saveCuenta(CuentaModelo cuenta);
 
     List<CuentaModelo> getAllCuentas();
+
+    boolean existsCuentaById(long id);
+
+    CuentaModelo getCuentaById(long id);
+
+    void deleteCuentaById(long id);
+
+    void updateCuentaById(long id, CuentaModelo cuentaModelo);
+
+    void editCuentaById(long id, CuentaModelo cuentaModelo);
 }

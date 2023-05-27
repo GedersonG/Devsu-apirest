@@ -46,11 +46,6 @@ public class ClienteHandler implements IClienteHandler {
     }
 
     @Override
-    public boolean existsClienteById(long id) {
-        return clienteServicePort.existsClienteById(id);
-    }
-
-    @Override
     public void updateClienteById(long id, ClienteUpdateRequestDto clienteUpdateRequestDto) {
         clienteServicePort.updateClienteById(
                 id,

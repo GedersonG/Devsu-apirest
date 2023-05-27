@@ -1,6 +1,7 @@
 package com.devsu.apirest.application.handler.impl;
 
 import com.devsu.apirest.application.dto.request.CuentaRequestDto;
+import com.devsu.apirest.application.dto.request.CuentaUpdateRequestDto;
 import com.devsu.apirest.application.dto.response.CuentaResponseDto;
 import com.devsu.apirest.application.handler.ICuentaHandler;
 import com.devsu.apirest.application.mapper.request.ICuentaRequestMapper;
@@ -25,14 +26,53 @@ public class CuentaHandler implements ICuentaHandler {
 
     @Override
     public void saveCuenta(CuentaRequestDto cuentaRequestDto) {
-        CuentaModelo cuentaModelo = cuentaRequestMapper.toCuenta(cuentaRequestDto);
-        cuentaModelo.getCliente().setIdentificacion(cuentaRequestDto.getIdentificacion());
-        cuentaModelo.setEstado(true);
-        cuentaServicePort.saveCuenta(cuentaModelo);
+        cuentaServicePort.saveCuenta(adjustCuenta(cuentaRequestDto));
     }
 
     @Override
     public List<CuentaResponseDto> getAllCuentas() {
-        return cuentaResponseMapper.toResponseList(cuentaServicePort.getAllCuentas());
+        List<CuentaModelo> cuentaModeloList = cuentaServicePort.getAllCuentas();
+        List<CuentaResponseDto> cuentaResponseDtoList = cuentaResponseMapper.toResponseList(cuentaServicePort.getAllCuentas());
+        for (int i = 0; i < cuentaModeloList.size(); i++) {
+            cuentaResponseDtoList.get(i).setNombre(cuentaModeloList.get(i).getCliente().getNombre());
+        }
+        return cuentaResponseDtoList;
+    }
+
+    @Override
+    public void deleteCuentaById(long id) {
+        cuentaServicePort.deleteCuentaById(id);
+    }
+
+    @Override
+    public CuentaResponseDto getCuentaById(long id) {
+        return cuentaResponseMapper.toResponse(cuentaServicePort.getCuentaById(id));
+    }
+
+    @Override
+    public void updateCuentaById(long id, CuentaUpdateRequestDto cuentaUpdateRequestDto) {
+        cuentaServicePort.updateCuentaById(
+                id,
+                cuentaRequestMapper.dtoUpdateToCuenta(
+                        cuentaUpdateRequestDto
+                )
+        );
+    }
+
+    @Override
+    public void editCuentaById(long id, CuentaRequestDto cuentaRequestDto) {
+        cuentaServicePort.editCuentaById(id, adjustCuenta(cuentaRequestDto));
+    }
+
+    private CuentaModelo adjustCuenta (CuentaRequestDto cuentaRequestDto) {
+        CuentaModelo cuentaModelo = cuentaRequestMapper.toCuenta(cuentaRequestDto);
+
+        ClienteModelo clienteModelo = new ClienteModelo();
+        clienteModelo.setIdentificacion(cuentaRequestDto.getIdentificacion());
+
+        cuentaModelo.setCliente(clienteModelo);
+        cuentaModelo.setEstado(true);
+
+        return cuentaModelo;
     }
 }
