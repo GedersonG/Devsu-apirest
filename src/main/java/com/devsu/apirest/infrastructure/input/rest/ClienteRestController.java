@@ -88,7 +88,7 @@ public class ClienteRestController {
     @PutMapping("/edit/{id}")
     public ResponseEntity<Void> editClienteById(
             @PathVariable("id") long id,
-            @RequestBody ClienteRequestDto clienteRequestDto
+            @Valid @RequestBody ClienteRequestDto clienteRequestDto
     ) {
         clienteHandler.editClienteById(id, clienteRequestDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -102,8 +102,8 @@ public class ClienteRestController {
     @PatchMapping("/update/{id}")
     public ResponseEntity<Void> updateClienteById(
             @PathVariable("id") long id,
-            @RequestBody ClienteUpdateRequestDto clienteUpdateRequestDto
-            ) {
+            @Valid @RequestBody ClienteUpdateRequestDto clienteUpdateRequestDto
+    ) {
         clienteHandler.updateClienteById(id, clienteUpdateRequestDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

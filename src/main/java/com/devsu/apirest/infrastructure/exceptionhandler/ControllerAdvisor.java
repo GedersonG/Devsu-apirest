@@ -40,7 +40,7 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<Map<String, String>> handleAlreadyExistsException(
-            DailyQuotaExceededException ignoredAlreadyExistsException) {
+            AlreadyExistsException ignoredAlreadyExistsException) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ALREADY_EXISTS.getMessage()));
     }

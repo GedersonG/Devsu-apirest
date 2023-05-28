@@ -101,8 +101,14 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
 
     @Override
     public void editCuentaById(long id, CuentaModelo cuentaModelo) {
-        //Comprueba si la cuenta existe
+        // Comprueba si la cuenta existe
         existsCuentaById(id);
+
+        // Obtenemos el cliente
+        ClienteEntidad clienteEntidad =
+                clienteRepository.findClienteEntidadByIdentificacion(
+                        cuentaModelo.getCliente().getIdentificacion()
+                ).orElseThrow(NoDataFoundException::new);
 
         logger.info("Editando cuenta # {}", id);
         cuentaRepository.editCuenta(
@@ -110,7 +116,7 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
                 cuentaModelo.getSaldoInicial(),
                 cuentaModelo.getTipoCuenta(),
                 cuentaModelo.isEstado(),
-                clienteEntityMapper.toEntity(cuentaModelo.getCliente())
+                clienteEntidad
         );
     }
 }

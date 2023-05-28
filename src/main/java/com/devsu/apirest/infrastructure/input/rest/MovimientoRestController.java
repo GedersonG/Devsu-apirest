@@ -32,7 +32,8 @@ public class MovimientoRestController {
             @ApiResponse(responseCode = "409", description = "Movimiento ya existe", content = @Content)
     })
     @PostMapping()
-    public ResponseEntity<Void> saveMovimiento(@Valid @RequestBody MovimientoRequestDto movimientoRequestDto) {
+    public ResponseEntity<Void> saveMovimiento(
+            @Valid @RequestBody MovimientoRequestDto movimientoRequestDto) {
         movimientoHandler.saveMovimiento(movimientoRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -82,7 +83,7 @@ public class MovimientoRestController {
     @PutMapping("/edit/{id}")
     public ResponseEntity<Void> editMovimientoById(
             @PathVariable("id") long id,
-            @RequestBody MovimientoRequestDto movimientoRequestDto
+            @Valid @RequestBody MovimientoRequestDto movimientoRequestDto
     ) {
         movimientoHandler.editMovimientoById(id, movimientoRequestDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -96,7 +97,7 @@ public class MovimientoRestController {
     @PatchMapping("/update/{id}")
     public ResponseEntity<Void> updateMovimientoById(
             @PathVariable("id") long id,
-            @RequestBody MovimientoUpdateRequestDto movimientoUpdateRequestDto
+            @Valid @RequestBody MovimientoUpdateRequestDto movimientoUpdateRequestDto
     ) {
         movimientoHandler.updateMovimientoById(id, movimientoUpdateRequestDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

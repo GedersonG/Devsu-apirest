@@ -9,7 +9,7 @@ public class MovimientoModelo {
     private long saldo;
     private CuentaModelo cuenta;
 
-    public MovimientoModelo(long movimientoId, String fecha, String tipo, long valor, long saldo, CuentaModelo cuenta) {
+    public MovimientoModelo(Long movimientoId, String fecha, String tipo, long valor, long saldo, CuentaModelo cuenta) {
         this.movimientoId = movimientoId;
         this.fecha = fecha;
         this.tipo = tipo;
@@ -21,7 +21,7 @@ public class MovimientoModelo {
     public MovimientoModelo() {
     }
 
-    public long getMovimientoId() {
+    public Long getMovimientoId() {
         return movimientoId;
     }
 

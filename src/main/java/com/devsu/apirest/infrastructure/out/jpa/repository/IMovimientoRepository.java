@@ -47,7 +47,7 @@ public interface IMovimientoRepository extends JpaRepository<MovimientoEntidad, 
     )
     Optional<Integer> sumValorByFecha (
             @Param("fecha") String fecha,
-            @Param("cuenta") long cuenta
+            @Param("cuenta") Long cuenta
     );
 
     @Query(

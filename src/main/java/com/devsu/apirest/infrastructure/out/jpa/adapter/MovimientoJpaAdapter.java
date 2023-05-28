@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 
 @RequiredArgsConstructor
 public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
@@ -38,7 +40,6 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
 
         // Operaciones de verificacion de datos de entrada
         CuentaEntidad cuenta = operationsVerify(
-                movimiento.getCuenta().getSaldoInicial(),
                 movimiento.getValor(),
                 movimiento.getCuenta().getNumeroCuenta()
         );
@@ -90,7 +91,9 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         existsMovimientoById(id);
 
         logger.info("Actualizando movimiento...");
-        movimientoRepository.updateMovimientoValor(id, movimientoModelo.getValor());
+        executeIfNotNull(
+                movimientoModelo.getValor(),
+                valor -> movimientoRepository.updateMovimientoValor(id, valor));
     }
 
     @Override
@@ -99,12 +102,13 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         existsMovimientoById(id);
 
         logger.info("Editando movimiento...");
-        movimientoRepository.editMovimiento(
-                id,
+
+        executeIfNotNull(
                 movimientoModelo.getFecha(),
                 movimientoModelo.getTipo(),
                 movimientoModelo.getValor(),
-                movimientoModelo.getSaldo()
+                movimientoModelo.getSaldo(),
+                (fecha, tipo, valor, saldo) -> movimientoRepository.editMovimiento(id, fecha, tipo, valor, saldo)
         );
     }
 
@@ -207,21 +211,21 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         return new SimpleDateFormat("dd/MM/yyyy").format(new Date());
     }
 
-    private int getValorTotalToday(long cuenta) {
-
+    private int getValorTotalToday(Long cuenta) {
         // Obtiene el monto total de retiro de HOY
         return movimientoRepository
                 .sumValorByFecha(getFechaToday(), cuenta).orElse(0);
     }
 
-    private void verifyQuota(long numeroCuenta, long valor) {
-
+    private void verifyQuota(Long numeroCuenta, long valor) {
         //Verifica si la cuota ya excedió o va a exceder en caso de retiro.
         if (
+                valor < 0 && (
                 getValorTotalToday(numeroCuenta)
                         == -1000 ||
                 valor + getValorTotalToday(numeroCuenta)
                         < -1000
+                )
         ) {
             throw new DailyQuotaExceededException();
         }
@@ -229,20 +233,21 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
 
     private void verifyBalance(long saldoInicial, long valor) {
         if (saldoInicial + valor < 0) {
+            logger.error("Saldo insuficiente. Posee {} e intenta retirar {}", saldoInicial, valor);
             throw new InsufficientBalanceException();
         }
     }
 
-    private CuentaEntidad operationsVerify(long saldoInicial, long valor, long numeroCuenta) {
+    private CuentaEntidad operationsVerify(long valor, Long numeroCuenta) {
 
         //Verifica que la cuenta existe
         CuentaEntidad cuenta = verifyAccount(numeroCuenta);
 
         // Verficar si hay saldo disponible en caso de retiro
-        verifyBalance(saldoInicial, valor);
+        verifyBalance(cuenta.getSaldoInicial(), valor);
 
         // Verificar si excede cupo maximo diario
-        verifyQuota(saldoInicial, valor);
+        verifyQuota(numeroCuenta, valor);
 
         return cuenta;
     }
@@ -291,5 +296,22 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         } catch (ParseException e) {
             throw new InvalidDateException();
         }
+    }
+
+    private <T1, T2, T3, T4> void executeIfNotNull(T1 value1, T2 value2, T3 value3, T4 value4, QuadConsumer<T1, T2, T3, T4> action) {
+        if (value1 != null && value2 != null && value3 != null && value4 != null) {
+            action.accept(value1, value2, value3, value4);
+        }
+    }
+
+    private void executeIfNotNull(long value, LongConsumer action) {
+        if (value != 0) {
+            action.accept(value);
+        }
+    }
+
+    @FunctionalInterface
+    interface QuadConsumer<T1, T2, T3, T4> {
+        void accept(T1 t1, T2 t2, T3 t3, T4 t4);
     }
 }

@@ -80,7 +80,7 @@ public class CuentaRestController {
     @PutMapping("/edit/{id}")
     public ResponseEntity<Void> editCuentaById(
             @PathVariable("id") long id,
-            @RequestBody CuentaRequestDto cuentaRequestDto
+            @Valid @RequestBody CuentaRequestDto cuentaRequestDto
     ) {
         cuentaHandler.editCuentaById(id, cuentaRequestDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -96,6 +96,7 @@ public class CuentaRestController {
             @PathVariable("id") long id,
             @RequestBody CuentaUpdateRequestDto cuentaUpdateRequestDto
     ) {
+        System.out.println("ABER:"+cuentaUpdateRequestDto.getSaldoInicial());
         cuentaHandler.updateCuentaById(id, cuentaUpdateRequestDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
