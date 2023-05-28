@@ -25,30 +25,31 @@ public class MovimientoRestController {
 
     private final IMovimientoHandler movimientoHandler;
 
-    @Operation(summary = "Agregar una nueva movimiento")
+    @Operation(summary = "Agregar un nuevo movimiento")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Movimiento creada", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Datos incorrectos", content = @Content),
             @ApiResponse(responseCode = "409", description = "Movimiento ya existe", content = @Content)
     })
     @PostMapping()
-    public ResponseEntity<Void> saveMovimiento (@Valid @RequestBody MovimientoRequestDto movimientoRequestDto) {
+    public ResponseEntity<Void> saveMovimiento(@Valid @RequestBody MovimientoRequestDto movimientoRequestDto) {
         movimientoHandler.saveMovimiento(movimientoRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Obtener todas las movimientos")
+    @Operation(summary = "Obtener todos los movimientos")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Todas las movimientos retornadas",
+            @ApiResponse(responseCode = "200", description = "Todos los movimientos retornados",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = MovimientoResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No se encontraron datos", content = @Content)
     })
     @GetMapping()
-    public ResponseEntity<List<MovimientoResponseDto>> getAllMovimientos () {
+    public ResponseEntity<List<MovimientoResponseDto>> getAllMovimientos() {
         return ResponseEntity.ok(movimientoHandler.getAllMovimientos());
     }
 
-    @Operation(summary = "Obtener movimiento por numero de movimiento")
+    @Operation(summary = "Obtener movimiento por id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Movimiento retornada",
                     content = @Content(mediaType = "application/json",
@@ -56,28 +57,30 @@ public class MovimientoRestController {
             @ApiResponse(responseCode = "404", description = "No se encontraron datos", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<MovimientoResponseDto> getMovimientoById (@PathVariable("id") long id) {
+    public ResponseEntity<MovimientoResponseDto> getMovimientoById(
+            @PathVariable("id") long id
+    ) {
         return ResponseEntity.ok(movimientoHandler.getMovimientoById(id));
     }
 
     @Operation(summary = "Borra un movimiento")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Movimiento eliminada", content = @Content),
+            @ApiResponse(responseCode = "204", description = "Movimiento eliminado", content = @Content),
             @ApiResponse(responseCode = "404", description = "Movimiento no existe", content = @Content)
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMovimientoById (@PathVariable("id") long id) {
+    public ResponseEntity<Void> deleteMovimientoById(@PathVariable("id") long id) {
         movimientoHandler.deleteMovimientoById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "Edita a un movimiento")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Movimiento editada", content = @Content),
+            @ApiResponse(responseCode = "204", description = "Movimiento editado", content = @Content),
             @ApiResponse(responseCode = "404", description = "Movimiento no existe", content = @Content)
     })
     @PutMapping("/edit/{id}")
-    public ResponseEntity<Void> editMovimientoById (
+    public ResponseEntity<Void> editMovimientoById(
             @PathVariable("id") long id,
             @RequestBody MovimientoRequestDto movimientoRequestDto
     ) {
@@ -87,11 +90,11 @@ public class MovimientoRestController {
 
     @Operation(summary = "Actualiza a un movimiento")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Movimiento actualizada", content = @Content),
+            @ApiResponse(responseCode = "204", description = "Movimiento actualizado", content = @Content),
             @ApiResponse(responseCode = "404", description = "Movimiento no existe", content = @Content)
     })
     @PatchMapping("/update/{id}")
-    public ResponseEntity<Void> updateMovimientoById (
+    public ResponseEntity<Void> updateMovimientoById(
             @PathVariable("id") long id,
             @RequestBody MovimientoUpdateRequestDto movimientoUpdateRequestDto
     ) {

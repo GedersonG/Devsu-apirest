@@ -3,7 +3,6 @@ package com.devsu.apirest.infrastructure.configuration;
 import com.devsu.apirest.domain.api.ICuentaServicePort;
 import com.devsu.apirest.domain.spi.ICuentaPersistencePort;
 import com.devsu.apirest.domain.usecase.CuentaUseCase;
-import com.devsu.apirest.infrastructure.out.jpa.adapter.ClienteJpaAdapter;
 import com.devsu.apirest.infrastructure.out.jpa.adapter.CuentaJpaAdapter;
 import com.devsu.apirest.infrastructure.out.jpa.mapper.IClienteEntityMapper;
 import com.devsu.apirest.infrastructure.out.jpa.mapper.ICuentaEntityMapper;

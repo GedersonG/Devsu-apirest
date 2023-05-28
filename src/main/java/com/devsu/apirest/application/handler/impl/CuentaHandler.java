@@ -25,27 +25,27 @@ public class CuentaHandler implements ICuentaHandler {
     private final ICuentaResponseMapper cuentaResponseMapper;
 
     @Override
-    public void saveCuenta (CuentaRequestDto cuentaRequestDto) {
+    public void saveCuenta(CuentaRequestDto cuentaRequestDto) {
         cuentaServicePort.saveCuenta(adjustCuenta(cuentaRequestDto));
     }
 
     @Override
-    public List<CuentaResponseDto> getAllCuentas () {
+    public List<CuentaResponseDto> getAllCuentas() {
         return cuentaResponseMapper.toResponseList(cuentaServicePort.getAllCuentas());
     }
 
     @Override
-    public void deleteCuentaById (long id) {
+    public void deleteCuentaById(long id) {
         cuentaServicePort.deleteCuentaById(id);
     }
 
     @Override
-    public CuentaResponseDto getCuentaById (long id) {
+    public CuentaResponseDto getCuentaById(long id) {
         return cuentaResponseMapper.toResponse(cuentaServicePort.getCuentaById(id));
     }
 
     @Override
-    public void updateCuentaById (long id, CuentaUpdateRequestDto cuentaUpdateRequestDto) {
+    public void updateCuentaById(long id, CuentaUpdateRequestDto cuentaUpdateRequestDto) {
         cuentaServicePort.updateCuentaById(
                 id,
                 cuentaRequestMapper.dtoUpdateToCuenta(
@@ -55,11 +55,11 @@ public class CuentaHandler implements ICuentaHandler {
     }
 
     @Override
-    public void editCuentaById (long id, CuentaRequestDto cuentaRequestDto) {
+    public void editCuentaById(long id, CuentaRequestDto cuentaRequestDto) {
         cuentaServicePort.editCuentaById(id, adjustCuenta(cuentaRequestDto));
     }
 
-    private CuentaModelo adjustCuenta (CuentaRequestDto cuentaRequestDto) {
+    private CuentaModelo adjustCuenta(CuentaRequestDto cuentaRequestDto) {
         CuentaModelo cuentaModelo = cuentaRequestMapper.toCuenta(cuentaRequestDto);
 
         ClienteModelo clienteModelo = new ClienteModelo();

@@ -24,29 +24,29 @@ public class ClienteHandler implements IClienteHandler {
     private final IClienteResponseMapper clienteResponseMapper;
 
     @Override
-    public void saveCliente (ClienteRequestDto clienteRequestDto) {
+    public void saveCliente(ClienteRequestDto clienteRequestDto) {
         ClienteModelo clienteModelo = clienteRequestMapper.toCliente(clienteRequestDto);
         clienteModelo.setEstado(true);
         clienteServicePort.saveCliente(clienteModelo);
     }
 
     @Override
-    public List<ClienteResponseDto> getAllClientes () {
+    public List<ClienteResponseDto> getAllClientes() {
         return clienteResponseMapper.toResponseList(clienteServicePort.getAllClientes());
     }
 
     @Override
-    public void deleteClienteById (long id) {
+    public void deleteClienteById(long id) {
         clienteServicePort.deleteClienteById(id);
     }
 
     @Override
-    public ClienteResponseDto getClienteById (long id) {
+    public ClienteResponseDto getClienteById(long id) {
         return clienteResponseMapper.toResponse(clienteServicePort.getClienteById(id));
     }
 
     @Override
-    public void updateClienteById (long id, ClienteUpdateRequestDto clienteUpdateRequestDto) {
+    public void updateClienteById(long id, ClienteUpdateRequestDto clienteUpdateRequestDto) {
         clienteServicePort.updateClienteById(
                 id,
                 clienteRequestMapper.dtoUpdateToCliente(
@@ -56,7 +56,7 @@ public class ClienteHandler implements IClienteHandler {
     }
 
     @Override
-    public void editClienteById (long id, ClienteRequestDto clienteRequestDto) {
+    public void editClienteById(long id, ClienteRequestDto clienteRequestDto) {
         clienteServicePort.editClienteById(id, clienteRequestMapper.toCliente(clienteRequestDto));
     }
 }

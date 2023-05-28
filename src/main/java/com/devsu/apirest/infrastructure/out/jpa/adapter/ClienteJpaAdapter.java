@@ -7,6 +7,8 @@ import com.devsu.apirest.infrastructure.exception.NoDataFoundException;
 import com.devsu.apirest.infrastructure.out.jpa.entity.ClienteEntidad;
 import com.devsu.apirest.infrastructure.out.jpa.mapper.IClienteEntityMapper;
 import com.devsu.apirest.infrastructure.out.jpa.repository.IClienteRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -14,9 +16,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClienteJpaAdapter implements IClientePersistencePort {
 
+    private static final Logger logger = LoggerFactory.getLogger(ClienteJpaAdapter.class);
     private final IClienteRepository clienteRepository;
     private final IClienteEntityMapper clienteEntityMapper;
-
 
     @Override
     public ClienteModelo saveCliente(ClienteModelo clienteModelo) {
@@ -24,13 +26,18 @@ public class ClienteJpaAdapter implements IClientePersistencePort {
         existsByIdentificacion(clienteModelo.getIdentificacion());
 
         ClienteEntidad clienteEntidad = clienteRepository.save(clienteEntityMapper.toEntity(clienteModelo));
-        return clienteEntityMapper.toClienteModelo(clienteEntidad);
+        ClienteModelo savedCliente = clienteEntityMapper.toClienteModelo(clienteEntidad);
+
+        logger.info("Cliente saved: {}", savedCliente);
+
+        return savedCliente;
     }
 
     @Override
     public List<ClienteModelo> getAllClientes() {
         List<ClienteEntidad> entityList = clienteRepository.findAll();
         if (entityList.isEmpty()) {
+            logger.error("No se encontraron clientes.");
             throw new NoDataFoundException();
         }
         return clienteEntityMapper.toClienteModeloList(entityList);
@@ -51,8 +58,10 @@ public class ClienteJpaAdapter implements IClientePersistencePort {
     @Override
     public void deleteClienteById(long id) {
         if(!existsClienteById(id)) {
+            logger.error("No se encontró un cliente con el id {}", id);
             throw new NoDataFoundException();
         }
+        logger.warn("Eliminando cliente...");
         clienteRepository.deleteById(id);
     }
 
@@ -69,7 +78,7 @@ public class ClienteJpaAdapter implements IClientePersistencePort {
         if(clienteModelo.getTelefono() != null) {
             cliente.setTelefono(clienteModelo.getTelefono());
         }
-
+        logger.info("Actualizando cliente...");
         clienteRepository.save(clienteEntityMapper.toEntity(cliente));
     }
 
@@ -79,12 +88,14 @@ public class ClienteJpaAdapter implements IClientePersistencePort {
 
         clienteRepository.delete(clienteEntityMapper.toEntity(clienteBefore));
 
+        logger.info("Editando cliente: {} ", clienteModelo.getNombre());
         saveCliente(clienteModelo);
     }
 
     @Override
     public void existsByIdentificacion(String identificacion) {
         if (clienteRepository.existsByIdentificacion(identificacion)) {
+            logger.error("El usuario con la identificacion {} ya existe.", identificacion);
             throw new AlreadyExistsException();
         }
     }

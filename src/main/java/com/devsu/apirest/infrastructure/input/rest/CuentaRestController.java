@@ -28,10 +28,11 @@ public class CuentaRestController {
     @Operation(summary = "Agregar una nueva cuenta")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Cuenta creada", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Datos incorrectos", content = @Content),
             @ApiResponse(responseCode = "409", description = "Cuenta ya existe", content = @Content)
     })
     @PostMapping()
-    public ResponseEntity<Void> saveCuenta (@Valid @RequestBody CuentaRequestDto cuentaRequestDto) {
+    public ResponseEntity<Void> saveCuenta(@Valid @RequestBody CuentaRequestDto cuentaRequestDto) {
         cuentaHandler.saveCuenta(cuentaRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -44,7 +45,7 @@ public class CuentaRestController {
             @ApiResponse(responseCode = "404", description = "No se encontraron datos", content = @Content)
     })
     @GetMapping()
-    public ResponseEntity<List<CuentaResponseDto>> getAllCuentas () {
+    public ResponseEntity<List<CuentaResponseDto>> getAllCuentas() {
         return ResponseEntity.ok(cuentaHandler.getAllCuentas());
     }
 
@@ -56,7 +57,7 @@ public class CuentaRestController {
             @ApiResponse(responseCode = "404", description = "No se encontraron datos", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<CuentaResponseDto> getCuentaById (@PathVariable("id") long id) {
+    public ResponseEntity<CuentaResponseDto> getCuentaById(@PathVariable("id") long id) {
         return ResponseEntity.ok(cuentaHandler.getCuentaById(id));
     }
 
@@ -66,7 +67,7 @@ public class CuentaRestController {
             @ApiResponse(responseCode = "404", description = "Cuenta no existe", content = @Content)
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCuentaById (@PathVariable("id") long id) {
+    public ResponseEntity<Void> deleteCuentaById(@PathVariable("id") long id) {
         cuentaHandler.deleteCuentaById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -77,7 +78,7 @@ public class CuentaRestController {
             @ApiResponse(responseCode = "404", description = "Cuenta no existe", content = @Content)
     })
     @PutMapping("/edit/{id}")
-    public ResponseEntity<Void> editCuentaById (
+    public ResponseEntity<Void> editCuentaById(
             @PathVariable("id") long id,
             @RequestBody CuentaRequestDto cuentaRequestDto
     ) {
@@ -91,7 +92,7 @@ public class CuentaRestController {
             @ApiResponse(responseCode = "404", description = "Cuenta no existe", content = @Content)
     })
     @PatchMapping("/update/{id}")
-    public ResponseEntity<Void> updateCuentaById (
+    public ResponseEntity<Void> updateCuentaById(
             @PathVariable("id") long id,
             @RequestBody CuentaUpdateRequestDto cuentaUpdateRequestDto
     ) {

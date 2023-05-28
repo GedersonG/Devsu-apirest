@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -16,6 +17,7 @@ public class CuentaRequestDto {
     @NotEmpty(message = "El tipo de cuenta es obligatorio.")
     private String tipoCuenta;
 
+    @Min(value = 20, message = "Debe abrir la cuenta mínimo con 20$")
     private long saldoInicial;
 
     @NotEmpty(message = "La identificacion del cliente es obligatoria.")

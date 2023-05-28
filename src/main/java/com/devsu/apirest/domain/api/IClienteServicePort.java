@@ -17,6 +17,4 @@ public interface IClienteServicePort {
     void updateClienteById(long id, ClienteModelo  clienteModelo);
 
     void editClienteById(long id, ClienteModelo clienteModelo);
-
-    void existsByIdentificacion(String identificacion);
 }

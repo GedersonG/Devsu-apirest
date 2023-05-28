@@ -25,9 +25,9 @@ public class ReportesRestController {
 
     private final IMovimientoHandler movimientoHandler;
 
-    @Operation(summary = "Obtener todas las movimientos")
+    @Operation(summary = "Obtener reportes")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Todas las movimientos retornadas",
+            @ApiResponse(responseCode = "200", description = "Reportes retornados",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = MovimientoResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No se encontraron datos", content = @Content)

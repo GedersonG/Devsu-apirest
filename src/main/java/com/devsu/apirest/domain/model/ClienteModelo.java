@@ -3,9 +3,7 @@ package com.devsu.apirest.domain.model;
 public class ClienteModelo extends PersonaModelo {
 
     private Long clienteId;
-
     private String clave;
-
     private boolean estado;
 
     public ClienteModelo() {

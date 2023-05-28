@@ -14,6 +14,8 @@ import com.devsu.apirest.infrastructure.out.jpa.mapper.IMovimientoEntityMapper;
 import com.devsu.apirest.infrastructure.out.jpa.repository.ICuentaRepository;
 import com.devsu.apirest.infrastructure.out.jpa.repository.IMovimientoRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
 
+    private static final Logger logger = LoggerFactory.getLogger(MovimientoJpaAdapter.class);
     private final ICuentaRepository cuentaRepository;
     private final IMovimientoRepository movimientoRepository;
     private final ICuentaEntityMapper cuentaEntityMapper;
@@ -39,6 +42,7 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
                 movimiento.getValor(),
                 movimiento.getCuenta().getNumeroCuenta()
         );
+        logger.info("Datos de entrada validos!");
 
         // Operaciones para el calculo del movimiento y asignacion de valores
         calculateMovimiento(movimiento, cuenta);
@@ -48,6 +52,7 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         MovimientoEntidad movimientoEntidad = movimientoRepository.save(
                 movimientoEntityMapper.toEntity(movimiento)
         );
+        logger.info("Movimiento guardado");
 
         return movimientoEntityMapper.toMovimientoModelo(movimientoEntidad);
     }
@@ -56,6 +61,7 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
     public List<MovimientoModelo> getAllMovimientos() {
         List<MovimientoEntidad> entityList = movimientoRepository.findAll();
         if (entityList.isEmpty()) {
+            logger.info("No se encontraron datos de tipo Movimiento.");
             throw new NoDataFoundException();
         }
 
@@ -76,8 +82,10 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
     @Override
     public void deleteMovimientoById(long id){
         if (!existsMovimientoById(id)) {
+            logger.error("No existe un registro de movimiento con el id: {}", id);
             throw new NoDataFoundException();
         }
+        logger.warn("Eliminando movimiento con id: {}", id);
         movimientoRepository.deleteById(id);
     }
 
@@ -87,6 +95,7 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
 
         movimiento.setValor(movimientoModelo.getValor());
 
+        logger.info("Actualizando movimiento...");
         movimientoRepository.save(movimientoEntityMapper.toEntity(movimiento));
     }
 
@@ -96,16 +105,25 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
 
         movimientoRepository.delete(movimientoEntityMapper.toEntity(movimientoBefore));
 
+        logger.info("Editando movimiento...");
         saveMovimiento(movimientoModelo);
     }
 
     @Override
-    public List<ReporteResponseDto> getReportesByIdentificacion(String identificacion, String[] fechas) {
+    public List<ReporteResponseDto> getReportesByIdentificacion(
+            String identificacion,
+            String[] fechas
+    ) {
 
         // Verificar que el usuario tenga al menos una cuenta
         verifyAccountByIdentificacion(identificacion);
 
-        // Verificar fechas
+        // Operar fechas
+        logger.info("Generando reporte...");
+        return addFechas(identificacion, fechas);
+    }
+
+    private List<ReporteResponseDto> addFechas(String identificacion, String[] fechas) {
         SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
         Date[] fechasDate = isFechasValid(fechas, formatoFecha);
 
@@ -128,7 +146,11 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         return reportes;
     }
 
-    private void operationFecha(String identificacion, List<ReporteResponseDto> reportes, String format) {
+    private void operationFecha(
+            String identificacion,
+            List<ReporteResponseDto> reportes,
+            String format
+    ) {
 
         // Realizar la operación por cada día
         List<Object[]> res = getReportesByFecha(identificacion, format);

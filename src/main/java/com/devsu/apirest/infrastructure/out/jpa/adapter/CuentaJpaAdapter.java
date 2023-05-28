@@ -11,12 +11,16 @@ import com.devsu.apirest.infrastructure.out.jpa.mapper.ICuentaEntityMapper;
 import com.devsu.apirest.infrastructure.out.jpa.repository.IClienteRepository;
 import com.devsu.apirest.infrastructure.out.jpa.repository.ICuentaRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 public class CuentaJpaAdapter implements ICuentaPersistencePort {
 
+    private static final Logger logger = LoggerFactory.getLogger(CuentaJpaAdapter.class);
     private final ICuentaRepository cuentaRepository;
     private final IClienteRepository clienteRepository;
     private final ICuentaEntityMapper cuentaEntityMapper;
@@ -29,6 +33,7 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
                 clienteRepository.findClienteEntidadByIdentificacion(
                         cuenta.getCliente().getIdentificacion()
                 ).orElseThrow(NoDataFoundException::new);
+        logger.info("Cliente obtenido: {}", cliente.getNombre());
         cuenta.setCliente(clienteEntityMapper.toClienteModelo(cliente));
 
         verifyAccounts(cuenta.getCliente().getIdentificacion(), cuenta.getTipoCuenta());
@@ -36,16 +41,17 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
         CuentaEntidad cuentaEntidad = cuentaRepository.save(
                 cuentaEntityMapper.toEntity(cuenta)
         );
-
+        logger.info("Se creó la cuenta con el número: {}", cuentaEntidad.getNumeroCuenta());
         return cuentaEntityMapper.toCuentaModelo(cuentaEntidad);
     }
 
     private void verifyAccounts(String identificacion, String tipoCuenta) {
-
+        logger.info("Verificando cuenta...");
         List<CuentaEntidad> cuentas = cuentaRepository.findAllByIdentificacion(identificacion);
 
         for(CuentaEntidad cuenta : cuentas) {
-            if (cuenta.getTipoCuenta() == tipoCuenta) {
+            if (Objects.equals(cuenta.getTipoCuenta(), tipoCuenta)) {
+                logger.error("Ya existe una cuenta de {} para esa persona.", tipoCuenta);
                 throw new AlreadyExistsException();
             }
         }
@@ -55,6 +61,7 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
     public List<CuentaModelo> getAllCuentas() {
         List<CuentaEntidad> entityList = cuentaRepository.findAll();
         if (entityList.isEmpty()) {
+            logger.error("No se encontraron cuentas.");
             throw new NoDataFoundException();
         }
         return cuentaEntityMapper.toCuentaModeloList(entityList);
@@ -75,8 +82,10 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
     @Override
     public void deleteCuentaById(long id) {
         if (!existsCuentaById(id)) {
+            logger.error("La cuenta con el id {} no existe", id);
             throw new NoDataFoundException();
         }
+        logger.warn("Eliminando cuenta con el id {}.", id);
         cuentaRepository.deleteById(id);
     }
 
@@ -85,7 +94,7 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
         CuentaModelo cuenta = getCuentaById(id);
 
         cuenta.setSaldoInicial(cuentaModelo.getSaldoInicial());
-
+        logger.info("Actualizando cuenta de {}.", cuenta.getCliente().getNombre());
         cuentaRepository.save(cuentaEntityMapper.toEntity(cuenta));
     }
 
@@ -94,7 +103,7 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
         CuentaModelo cuentaBefore = getCuentaById(id);
 
         cuentaRepository.delete(cuentaEntityMapper.toEntity(cuentaBefore));
-
+        logger.info("Editando cuenta de: {}", cuentaModelo.getCliente().getNombre());
         saveCuenta(cuentaModelo);
     }
 }

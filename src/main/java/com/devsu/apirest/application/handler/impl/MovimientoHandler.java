@@ -65,7 +65,7 @@ public class MovimientoHandler implements IMovimientoHandler {
         return movimientoServicePort.getReportesByIdentificacion(identificacion, fecha);
     }
 
-    private MovimientoModelo adjustMovimiento (MovimientoRequestDto movimientoRequestDto) {
+    private MovimientoModelo adjustMovimiento(MovimientoRequestDto movimientoRequestDto) {
 
         MovimientoModelo movimientoModelo = movimientoRequestMapper.toMovimiento(movimientoRequestDto);
 

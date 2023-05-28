@@ -2,7 +2,6 @@ package com.devsu.apirest.application.dto.response.cuenta;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
