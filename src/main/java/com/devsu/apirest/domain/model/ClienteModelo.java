@@ -11,7 +11,7 @@ public class ClienteModelo extends PersonaModelo {
     public ClienteModelo() {
     }
 
-    public ClienteModelo(String nombre, String genero, short edad, String identificacion, String direccion, String telefono, Long clienteId, String clave, boolean estado) {
+    public ClienteModelo(String nombre, String genero, int edad, String identificacion, String direccion, String telefono, Long clienteId, String clave, boolean estado) {
         super(nombre, genero, edad, identificacion, direccion, telefono);
         this.clienteId = clienteId;
         this.clave = clave;

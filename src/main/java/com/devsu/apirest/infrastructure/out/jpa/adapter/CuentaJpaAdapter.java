@@ -2,6 +2,7 @@ package com.devsu.apirest.infrastructure.out.jpa.adapter;
 
 import com.devsu.apirest.domain.model.CuentaModelo;
 import com.devsu.apirest.domain.spi.ICuentaPersistencePort;
+import com.devsu.apirest.infrastructure.exception.AlreadyExistsException;
 import com.devsu.apirest.infrastructure.exception.NoDataFoundException;
 import com.devsu.apirest.infrastructure.out.jpa.entity.ClienteEntidad;
 import com.devsu.apirest.infrastructure.out.jpa.entity.CuentaEntidad;
@@ -30,11 +31,24 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
                 ).orElseThrow(NoDataFoundException::new);
         cuenta.setCliente(clienteEntityMapper.toClienteModelo(cliente));
 
+        verifyAccounts(cuenta.getCliente().getIdentificacion(), cuenta.getTipoCuenta());
+
         CuentaEntidad cuentaEntidad = cuentaRepository.save(
                 cuentaEntityMapper.toEntity(cuenta)
         );
 
         return cuentaEntityMapper.toCuentaModelo(cuentaEntidad);
+    }
+
+    private void verifyAccounts(String identificacion, String tipoCuenta) {
+
+        List<CuentaEntidad> cuentas = cuentaRepository.findAllByIdentificacion(identificacion);
+
+        for(CuentaEntidad cuenta : cuentas) {
+            if (cuenta.getTipoCuenta() == tipoCuenta) {
+                throw new AlreadyExistsException();
+            }
+        }
     }
 
     @Override

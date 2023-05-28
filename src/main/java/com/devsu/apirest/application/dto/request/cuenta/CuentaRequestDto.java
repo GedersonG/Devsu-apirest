@@ -1,5 +1,6 @@
 package com.devsu.apirest.application.dto.request.cuenta;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.Size;
 
 @Setter
 @Getter
+@Builder
 public class CuentaRequestDto {
 
     @NotEmpty(message = "El tipo de cuenta es obligatorio.")

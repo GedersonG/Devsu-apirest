@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface IClienteRepository extends JpaRepository<ClienteEntidad, Long> {
     Optional<ClienteEntidad> findClienteEntidadByIdentificacion (String identificacion);
+    boolean existsByIdentificacion(String identificacion);
 }

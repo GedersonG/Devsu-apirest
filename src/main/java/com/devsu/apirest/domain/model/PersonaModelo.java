@@ -4,7 +4,7 @@ public class PersonaModelo {
 
     private String nombre;
     private String genero;
-    private short edad;
+    private int edad;
     private String identificacion;
     private String direccion;
     private String telefono;
@@ -12,7 +12,7 @@ public class PersonaModelo {
     public PersonaModelo() {
     }
 
-    public PersonaModelo(String nombre, String genero, short edad, String identificacion, String direccion, String telefono) {
+    public PersonaModelo(String nombre, String genero, int edad, String identificacion, String direccion, String telefono) {
         this.nombre = nombre;
         this.genero = genero;
         this.edad = edad;
@@ -37,7 +37,7 @@ public class PersonaModelo {
         this.genero = genero;
     }
 
-    public short getEdad() {
+    public int getEdad() {
         return edad;
     }
 

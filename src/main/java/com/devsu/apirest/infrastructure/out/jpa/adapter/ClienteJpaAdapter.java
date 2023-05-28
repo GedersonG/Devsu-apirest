@@ -2,6 +2,7 @@ package com.devsu.apirest.infrastructure.out.jpa.adapter;
 
 import com.devsu.apirest.domain.model.ClienteModelo;
 import com.devsu.apirest.domain.spi.IClientePersistencePort;
+import com.devsu.apirest.infrastructure.exception.AlreadyExistsException;
 import com.devsu.apirest.infrastructure.exception.NoDataFoundException;
 import com.devsu.apirest.infrastructure.out.jpa.entity.ClienteEntidad;
 import com.devsu.apirest.infrastructure.out.jpa.mapper.IClienteEntityMapper;
@@ -19,6 +20,9 @@ public class ClienteJpaAdapter implements IClientePersistencePort {
 
     @Override
     public ClienteModelo saveCliente(ClienteModelo clienteModelo) {
+        // Comprueba si la persona con esa identificacion ya existe.
+        existsByIdentificacion(clienteModelo.getIdentificacion());
+
         ClienteEntidad clienteEntidad = clienteRepository.save(clienteEntityMapper.toEntity(clienteModelo));
         return clienteEntityMapper.toClienteModelo(clienteEntidad);
     }
@@ -76,5 +80,12 @@ public class ClienteJpaAdapter implements IClientePersistencePort {
         clienteRepository.delete(clienteEntityMapper.toEntity(clienteBefore));
 
         saveCliente(clienteModelo);
+    }
+
+    @Override
+    public void existsByIdentificacion(String identificacion) {
+        if (clienteRepository.existsByIdentificacion(identificacion)) {
+            throw new AlreadyExistsException();
+        }
     }
 }

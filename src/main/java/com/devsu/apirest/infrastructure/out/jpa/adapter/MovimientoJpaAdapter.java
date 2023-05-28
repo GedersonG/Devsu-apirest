@@ -7,7 +7,6 @@ import com.devsu.apirest.infrastructure.exception.DailyQuotaExceededException;
 import com.devsu.apirest.infrastructure.exception.InsufficientBalanceException;
 import com.devsu.apirest.infrastructure.exception.InvalidDateException;
 import com.devsu.apirest.infrastructure.exception.NoDataFoundException;
-import com.devsu.apirest.infrastructure.out.jpa.entity.ClienteEntidad;
 import com.devsu.apirest.infrastructure.out.jpa.entity.CuentaEntidad;
 import com.devsu.apirest.infrastructure.out.jpa.entity.MovimientoEntidad;
 import com.devsu.apirest.infrastructure.out.jpa.mapper.ICuentaEntityMapper;
@@ -103,55 +102,68 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
     @Override
     public List<ReporteResponseDto> getReportesByIdentificacion(String identificacion, String[] fechas) {
 
-        List<CuentaEntidad> cuentas = cuentaRepository.findAllByIdentificacion(identificacion);
+        // Verificar que el usuario tenga al menos una cuenta
+        verifyAccountByIdentificacion(identificacion);
 
-        if (cuentas.isEmpty()) {
-            throw new NoDataFoundException();
-        }
-
+        // Verificar fechas
         SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
         Date[] fechasDate = isFechasValid(fechas, formatoFecha);
 
-        if (fechasDate[0].after(fechasDate[1])) {
-            throw new InvalidDateException();
-        }
-
-        List<ReporteResponseDto> reportes = new ArrayList<ReporteResponseDto>();
+        List<ReporteResponseDto> reportes = new ArrayList<>();
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(fechasDate[0]);
 
         while (!calendar.getTime().after(fechasDate[1])) {
-            // Realizar la operación por cada día
-            List<Object[]> res = movimientoRepository.getReporte(
-                   identificacion,
-                   formatoFecha.format(calendar.getTime()));
 
-            for (Object[] report : res) {
-
-                String fecha = (String) report[0];
-                long numeroCuenta = (long) report[1];
-                String tipoCuenta = (String) report[2];
-                long valor = (long) report[4];
-                long saldo = (long) report[5];
-                long saldoInicial = ((long) report[3]) - valor;
-                String nombreCliente = (String) report[6];
-
-                reportes.add(ReporteResponseDto.builder()
-                                .fecha(fecha)
-                                .nombre(nombreCliente)
-                                .numeroCuenta(numeroCuenta)
-                                .tipoCuenta(tipoCuenta)
-                                .saldoInicial(saldoInicial)
-                                .valor(valor).saldo(saldo)
-                                .build()
-                );
-            }
+            operationFecha(
+                    identificacion,
+                    reportes,
+                    formatoFecha.format(calendar.getTime())
+            );
 
             // Avanzar al siguiente día
             calendar.add(Calendar.DAY_OF_YEAR, 1);
         }
         return reportes;
+    }
+
+    private void operationFecha(String identificacion, List<ReporteResponseDto> reportes, String format) {
+
+        // Realizar la operación por cada día
+        List<Object[]> res = getReportesByFecha(identificacion, format);
+
+        // Llenar los reportes
+        for (Object[] report : res) {
+            addReporte(report, reportes);
+        }
+    }
+
+    private List<Object[]> getReportesByFecha(String identificacion, String format) {
+        return movimientoRepository.getReporte(identificacion, format);
+    }
+
+    private void addReporte(Object[] report, List<ReporteResponseDto> reportes) {
+
+        // Agrega el reporte obtenido en la consulta
+        reportes.add(ReporteResponseDto.builder()
+                .fecha((String) report[0])
+                .nombre((String) report[6])
+                .numeroCuenta((long) report[1])
+                .tipoCuenta((String) report[2])
+                .saldoInicial((long) report[3] - (long) report[4])
+                .valor((long) report[4])
+                .saldo((long) report[5])
+                .build()
+        );
+    }
+
+    private void verifyAccountByIdentificacion(String identificacion) {
+        List<CuentaEntidad> cuentas = cuentaRepository.findAllByIdentificacion(identificacion);
+
+        if (cuentas.isEmpty()) {
+            throw new NoDataFoundException();
+        }
     }
 
     private CuentaEntidad verifyAccount(long numeroCuenta) {
@@ -241,6 +253,10 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
 
             fechasDate[0] = formatoFecha.parse(fechas[0]);
             fechasDate[1] = formatoFecha.parse(fechas[1]);
+
+            if (fechasDate[0].after(fechasDate[1])) {
+                throw new InvalidDateException();
+            }
 
             return fechasDate;
         } catch (ParseException e) {

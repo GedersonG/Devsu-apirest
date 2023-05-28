@@ -43,4 +43,9 @@ public class ClienteUseCase implements IClienteServicePort {
     public void editClienteById(long id, ClienteModelo clienteModelo) {
         clientePersistencePort.editClienteById(id, clienteModelo);
     }
+
+    @Override
+    public void existsByIdentificacion(String identificacion) {
+        clientePersistencePort.existsByIdentificacion(identificacion);
+    }
 }

@@ -1,5 +1,6 @@
 package com.devsu.apirest.application.dto.request.cliente;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
+@Builder
 public class ClienteRequestDto {
 
     @NotEmpty(message = "El nombre es obligatorio.")
@@ -36,7 +38,7 @@ public class ClienteRequestDto {
 
     @Min(value = 18, message = "Debes ser mayor de edad.")
     @Max(value = 200, message = "Edad inválida.")
-    private short edad;
+    private int edad;
 
     @NotEmpty(message = "El género es obligatorio.")
     private String genero;
