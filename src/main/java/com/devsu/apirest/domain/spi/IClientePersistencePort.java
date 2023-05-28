@@ -9,15 +9,11 @@ public interface IClientePersistencePort {
 
     List<ClienteModelo> getAllClientes();
 
-    ClienteModelo getClienteById(long id);
+    ClienteModelo getClienteById(Long id);
 
-    boolean existsClienteById(long id);
+    void deleteClienteById(Long id);
 
-    void deleteClienteById(long id);
+    void updateClienteById(Long id, ClienteModelo clienteModelo);
 
-    void updateClienteById(long id, ClienteModelo clienteModelo);
-
-    void editClienteById(long id, ClienteModelo clienteModelo);
-
-    void existsByIdentificacion(String identificacion);
+    void editClienteById(Long id, ClienteModelo clienteModelo);
 }

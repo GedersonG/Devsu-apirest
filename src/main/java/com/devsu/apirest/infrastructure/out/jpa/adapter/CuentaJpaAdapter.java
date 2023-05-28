@@ -67,9 +67,11 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
         return cuentaEntityMapper.toCuentaModeloList(entityList);
     }
 
-    @Override
-    public boolean existsCuentaById(long id) {
-        return cuentaRepository.existsById(id);
+    private void existsCuentaById(long id) {
+        if (!cuentaRepository.existsById(id)) {
+            logger.error("No existe una cuenta el con id {}", id);
+            throw new NoDataFoundException();
+        }
     }
 
     @Override
@@ -81,29 +83,34 @@ public class CuentaJpaAdapter implements ICuentaPersistencePort {
 
     @Override
     public void deleteCuentaById(long id) {
-        if (!existsCuentaById(id)) {
-            logger.error("La cuenta con el id {} no existe", id);
-            throw new NoDataFoundException();
-        }
+        //Comprueba si la cuenta existe
+        existsCuentaById(id);
+
         logger.warn("Eliminando cuenta con el id {}.", id);
         cuentaRepository.deleteById(id);
     }
 
     @Override
     public void updateCuentaById(long id, CuentaModelo cuentaModelo) {
-        CuentaModelo cuenta = getCuentaById(id);
+        // Comprueba si la cuenta existe
+        existsCuentaById(id);
 
-        cuenta.setSaldoInicial(cuentaModelo.getSaldoInicial());
-        logger.info("Actualizando cuenta de {}.", cuenta.getCliente().getNombre());
-        cuentaRepository.save(cuentaEntityMapper.toEntity(cuenta));
+        logger.info("Actualizando cuenta # {}.", id);
+        cuentaRepository.updateSaldoInicial(id, cuentaModelo.getSaldoInicial());
     }
 
     @Override
     public void editCuentaById(long id, CuentaModelo cuentaModelo) {
-        CuentaModelo cuentaBefore = getCuentaById(id);
+        //Comprueba si la cuenta existe
+        existsCuentaById(id);
 
-        cuentaRepository.delete(cuentaEntityMapper.toEntity(cuentaBefore));
-        logger.info("Editando cuenta de: {}", cuentaModelo.getCliente().getNombre());
-        saveCuenta(cuentaModelo);
+        logger.info("Editando cuenta # {}", id);
+        cuentaRepository.editCuenta(
+                id,
+                cuentaModelo.getSaldoInicial(),
+                cuentaModelo.getTipoCuenta(),
+                cuentaModelo.isEstado(),
+                clienteEntityMapper.toEntity(cuentaModelo.getCliente())
+        );
     }
 }

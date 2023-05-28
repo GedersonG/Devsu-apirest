@@ -28,7 +28,7 @@ public class ClienteJpaAdapter implements IClientePersistencePort {
         ClienteEntidad clienteEntidad = clienteRepository.save(clienteEntityMapper.toEntity(clienteModelo));
         ClienteModelo savedCliente = clienteEntityMapper.toClienteModelo(clienteEntidad);
 
-        logger.info("Cliente saved: {}", savedCliente);
+        logger.info("Cliente saved: {}", savedCliente.getNombre());
 
         return savedCliente;
     }
@@ -44,59 +44,66 @@ public class ClienteJpaAdapter implements IClientePersistencePort {
     }
 
     @Override
-    public ClienteModelo getClienteById(long id) {
+    public ClienteModelo getClienteById(Long id) {
         ClienteEntidad cliente =
                 clienteRepository.findById(id).orElseThrow(NoDataFoundException::new);
         return clienteEntityMapper.toClienteModelo(cliente);
     }
 
     @Override
-    public boolean existsClienteById(long id) {
-        return clienteRepository.existsById(id);
-    }
-
-    @Override
-    public void deleteClienteById(long id) {
-        if(!existsClienteById(id)) {
-            logger.error("No se encontró un cliente con el id {}", id);
-            throw new NoDataFoundException();
-        }
+    public void deleteClienteById(Long id) {
+        // Comprueba si el cliente con el id existe.
+        existsClienteById(id);      
+        
         logger.warn("Eliminando cliente...");
         clienteRepository.deleteById(id);
     }
 
     @Override
-    public void updateClienteById(long id, ClienteModelo clienteModelo) {
-        ClienteModelo cliente = getClienteById(id);
+    public void updateClienteById(Long id, ClienteModelo clienteModelo) {
+        // Comprueba si el cliente con el id existe.
+        existsClienteById(id);
 
-        if(clienteModelo.getNombre() != null) {
-            cliente.setNombre(clienteModelo.getNombre());
-        }
-        if(clienteModelo.getDireccion() != null) {
-            cliente.setDireccion(clienteModelo.getDireccion());
-        }
-        if(clienteModelo.getTelefono() != null) {
-            cliente.setTelefono(clienteModelo.getTelefono());
-        }
         logger.info("Actualizando cliente...");
-        clienteRepository.save(clienteEntityMapper.toEntity(cliente));
+        
+        clienteRepository.updateCliente(
+                id, 
+                clienteModelo.getNombre(), 
+                clienteModelo.getDireccion(), 
+                clienteModelo.getTelefono()
+        );
     }
 
     @Override
-    public void editClienteById(long id, ClienteModelo clienteModelo) {
-        ClienteModelo clienteBefore = getClienteById(id);
-
-        clienteRepository.delete(clienteEntityMapper.toEntity(clienteBefore));
+    public void editClienteById(Long id, ClienteModelo clienteModelo) {
+        // Comprueba que existe el cliente con el id
+        existsClienteById(id);
 
         logger.info("Editando cliente: {} ", clienteModelo.getNombre());
-        saveCliente(clienteModelo);
+        clienteRepository.editCliente(
+                id,
+                clienteModelo.getClave(),
+                clienteModelo.isEstado(),
+                clienteModelo.getNombre(),
+                clienteModelo.getGenero(),
+                clienteModelo.getEdad(),
+                clienteModelo.getIdentificacion(),
+                clienteModelo.getDireccion(),
+                clienteModelo.getTelefono()
+        );
     }
-
-    @Override
-    public void existsByIdentificacion(String identificacion) {
+    
+    private void existsByIdentificacion(String identificacion) {
         if (clienteRepository.existsByIdentificacion(identificacion)) {
             logger.error("El usuario con la identificacion {} ya existe.", identificacion);
             throw new AlreadyExistsException();
+        }
+    }
+
+    private void existsClienteById(Long id) {
+        if (!clienteRepository.existsById(id)) {
+            logger.error("No se encontró un cliente con el id {}", id);
+            throw new NoDataFoundException();
         }
     }
 }

@@ -11,8 +11,6 @@ public interface IMovimientoPersistencePort {
 
     List<MovimientoModelo> getAllMovimientos();
 
-    boolean existsMovimientoById(long id);
-
     MovimientoModelo getMovimientoById(long id);
 
     void deleteMovimientoById(long id);

@@ -9,8 +9,6 @@ public interface ICuentaPersistencePort {
 
     List<CuentaModelo> getAllCuentas();
 
-    boolean existsCuentaById(long id);
-
     CuentaModelo getCuentaById(long id);
 
     void deleteCuentaById(long id);

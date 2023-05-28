@@ -26,7 +26,7 @@ public class CuentaEntidad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_cuenta")
-    private long numeroCuenta;
+    private Long numeroCuenta;
 
     @Column(name = "tipo", nullable = false)
     private String tipoCuenta;

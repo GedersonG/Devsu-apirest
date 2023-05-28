@@ -69,44 +69,43 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
     }
 
     @Override
-    public boolean existsMovimientoById(long id){
-        return movimientoRepository.existsById(id);
-    }
-    @Override
-    public MovimientoModelo getMovimientoById(long id){
+    public MovimientoModelo getMovimientoById(long id) {
         MovimientoEntidad movimiento =
                 movimientoRepository.findById(id).orElseThrow(NoDataFoundException::new);
         return movimientoEntityMapper.toMovimientoModelo(movimiento);
     }
 
     @Override
-    public void deleteMovimientoById(long id){
-        if (!existsMovimientoById(id)) {
-            logger.error("No existe un registro de movimiento con el id: {}", id);
-            throw new NoDataFoundException();
-        }
+    public void deleteMovimientoById(long id) {
+        // Comprueba si el movimiento con el id existe
+        existsMovimientoById(id);
+
         logger.warn("Eliminando movimiento con id: {}", id);
         movimientoRepository.deleteById(id);
     }
 
     @Override
-    public void updateMovimientoById(long id, MovimientoModelo movimientoModelo){
-        MovimientoModelo movimiento = getMovimientoById(id);
-
-        movimiento.setValor(movimientoModelo.getValor());
+    public void updateMovimientoById(long id, MovimientoModelo movimientoModelo) {
+        // Comprueba si el movimiento con el id existe
+        existsMovimientoById(id);
 
         logger.info("Actualizando movimiento...");
-        movimientoRepository.save(movimientoEntityMapper.toEntity(movimiento));
+        movimientoRepository.updateMovimientoValor(id, movimientoModelo.getValor());
     }
 
     @Override
-    public void editMovimientoById(long id, MovimientoModelo movimientoModelo){
-        MovimientoModelo movimientoBefore = getMovimientoById(id);
-
-        movimientoRepository.delete(movimientoEntityMapper.toEntity(movimientoBefore));
+    public void editMovimientoById(long id, MovimientoModelo movimientoModelo) {
+        // Comprueba si el movimiento con el id existe
+        existsMovimientoById(id);
 
         logger.info("Editando movimiento...");
-        saveMovimiento(movimientoModelo);
+        movimientoRepository.editMovimiento(
+                id,
+                movimientoModelo.getFecha(),
+                movimientoModelo.getTipo(),
+                movimientoModelo.getValor(),
+                movimientoModelo.getSaldo()
+        );
     }
 
     @Override
@@ -121,6 +120,13 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         // Operar fechas
         logger.info("Generando reporte...");
         return addFechas(identificacion, fechas);
+    }
+
+    private void existsMovimientoById(long id) {
+        if (!movimientoRepository.existsById(id)) {
+            logger.error("No existe un registro de movimiento con el id: {}", id);
+            throw new NoDataFoundException();
+        }
     }
 
     private List<ReporteResponseDto> addFechas(String identificacion, String[] fechas) {
@@ -184,6 +190,7 @@ public class MovimientoJpaAdapter implements IMovimientoPersistencePort {
         List<CuentaEntidad> cuentas = cuentaRepository.findAllByIdentificacion(identificacion);
 
         if (cuentas.isEmpty()) {
+            logger.error("El usuario no tiene cuentas asociadas.");
             throw new NoDataFoundException();
         }
     }

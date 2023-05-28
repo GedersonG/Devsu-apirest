@@ -2,7 +2,7 @@ package com.devsu.apirest.domain.model;
 
 public class MovimientoModelo {
 
-    private long movimientoId;
+    private Long movimientoId;
     private String fecha;
     private String tipo;
     private long valor;
